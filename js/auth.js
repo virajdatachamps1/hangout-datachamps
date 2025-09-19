@@ -1,28 +1,45 @@
 // Clerk Configuration
 const CLERK_PUBLISHABLE_KEY = 'pk_test_ZXhvdGljLWFhcmR2YXJrLTI4LmNsZXJrLmFjY291bnRzLmRldiQ'; // Replace with your Clerk publishable key
-// Modified Authentication Manager - Frontend Domain Validation Only
 
+// Updated Authentication Manager
 class AuthManager {
   constructor() {
     this.clerk = null;
     this.user = null;
-    this.initClerk();
+    this.isInitialized = false;
+
+    // Wait for Clerk to be ready
+    window.addEventListener('clerk-ready', () => {
+      this.initClerk();
+    });
+
+    // If Clerk is already ready, init immediately
+    if (window.Clerk) {
+      this.initClerk();
+    }
   }
 
   async initClerk() {
     try {
+      if (this.isInitialized) return;
+
       this.clerk = window.Clerk;
-      await this.clerk.load();
-      
+      this.isInitialized = true;
+
+      console.log('Initializing auth with Clerk...');
+
       if (this.clerk.user) {
+        console.log('User already logged in:', this.clerk.user.primaryEmailAddress?.emailAddress);
         this.user = this.clerk.user;
         await this.handleUserLogin();
       } else {
+        console.log('No user logged in, showing login modal');
         this.showLoginModal();
       }
 
       // Listen for auth state changes
       this.clerk.addListener(({ user }) => {
+        console.log('Auth state changed:', user?.primaryEmailAddress?.emailAddress || 'logged out');
         if (user) {
           this.user = user;
           this.handleUserLogin();
@@ -33,16 +50,15 @@ class AuthManager {
 
     } catch (error) {
       console.error('Failed to initialize Clerk:', error);
-      this.showError('Authentication service is unavailable');
+      this.showError('Authentication service is unavailable. Please refresh the page.');
     }
   }
 
   async handleUserLogin() {
     try {
-      // Check if user email is from datachamps.ai domain
       const email = this.user.primaryEmailAddress?.emailAddress;
       console.log('User attempting login:', email);
-      
+
       if (!email || !email.endsWith('@datachamps.ai')) {
         console.log('Access denied for email:', email);
         await this.clerk.signOut();
@@ -52,19 +68,15 @@ class AuthManager {
 
       console.log('User authenticated successfully:', email);
 
-      // Hide login modal
       this.hideLoginModal();
-
-      // Update UI with user info
       this.updateUserInterface();
-
-      // Register/update user in backend
       await this.registerUser();
 
-      // Load user-specific data
       if (window.app) {
         await window.app.loadUserData();
       }
+
+      this.showSuccess(`Welcome back, ${this.getUserName()}!`);
 
     } catch (error) {
       console.error('Login error:', error);
@@ -111,7 +123,7 @@ class AuthManager {
       const userData = {
         email: this.user.primaryEmailAddress?.emailAddress,
         name: this.user.fullName || `${this.user.firstName} ${this.user.lastName}`,
-        role: 'Team Member', // Default role
+        role: 'Team Member',
         lastLogin: new Date().toISOString()
       };
 
@@ -119,7 +131,6 @@ class AuthManager {
       console.log('User registered successfully:', userData.email);
     } catch (error) {
       console.error('Failed to register user:', error);
-      // Don't show error to user for registration failures
     }
   }
 
@@ -127,31 +138,28 @@ class AuthManager {
     const modal = document.getElementById('loginModal');
     if (modal) {
       modal.style.display = 'flex';
-      
-      // Mount Clerk sign-in component
+
       if (this.clerk) {
-        this.clerk.mountSignIn(document.getElementById('clerk-signin'), {
-          routing: 'virtual',
-          redirectUrl: window.location.href,
-          appearance: {
-            elements: {
-              formButtonPrimary: 'bg-blue-600 hover:bg-blue-700',
-              card: 'border-0 shadow-lg',
-              headerTitle: 'text-2xl font-bold text-gray-900',
-              headerSubtitle: 'text-gray-600'
-            }
-          },
-          // Add a message about email restrictions
-          localization: {
-            signIn: {
-              start: {
-                title: 'Sign in to DataChamps Hangout',
-                subtitle: 'Please use your @datachamps.ai email address'
+        const signInDiv = document.getElementById('clerk-signin');
+        if (signInDiv) {
+          signInDiv.innerHTML = '';
+
+          this.clerk.mountSignIn(signInDiv, {
+            routing: 'virtual',
+            redirectUrl: window.location.href,
+            appearance: {
+              elements: {
+                formButtonPrimary: 'clerk-btn-primary',
+                card: 'clerk-card',
+                headerTitle: 'clerk-title',
+                headerSubtitle: 'clerk-subtitle'
               }
             }
-          }
-        });
+          });
+        }
       }
+    } else {
+      console.error('Login modal not found in DOM');
     }
   }
 
@@ -163,7 +171,6 @@ class AuthManager {
   }
 
   showError(message) {
-    // Create error notification
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-notification';
     errorDiv.innerHTML = `
@@ -175,20 +182,11 @@ class AuthManager {
         </button>
       </div>
     `;
-
-    // Add to page
     document.body.appendChild(errorDiv);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      if (errorDiv.parentElement) {
-        errorDiv.remove();
-      }
-    }, 5000);
+    setTimeout(() => errorDiv.remove(), 5000);
   }
 
   showSuccess(message) {
-    // Create success notification
     const successDiv = document.createElement('div');
     successDiv.className = 'success-notification';
     successDiv.innerHTML = `
@@ -200,16 +198,8 @@ class AuthManager {
         </button>
       </div>
     `;
-
-    // Add to page
     document.body.appendChild(successDiv);
-
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-      if (successDiv.parentElement) {
-        successDiv.remove();
-      }
-    }, 3000);
+    setTimeout(() => successDiv.remove(), 3000);
   }
 
   async logout() {
@@ -223,11 +213,8 @@ class AuthManager {
     }
   }
 
-  // Since we don't have JWT, we'll return the user's email as a simple identifier
   async getToken() {
     if (!this.user) return null;
-    
-    // Return the user's email as identifier (not secure, but works for basic auth)
     return this.user.primaryEmailAddress?.emailAddress;
   }
 
@@ -243,7 +230,6 @@ class AuthManager {
     return this.user?.fullName || this.user?.firstName || 'User';
   }
 
-  // Get user ID for API calls
   getUserId() {
     return this.user?.id || null;
   }
