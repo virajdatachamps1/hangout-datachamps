@@ -1,110 +1,167 @@
 // Clerk Initialization - Load this before auth.js
 const CLERK_PUBLISHABLE_KEY = 'pk_test_ZXhvdGljLWFhcmR2YXJrLTI4LmNsZXJrLmFjY291bnRzLmRldiQ'; // Replace with your actual key
 
-console.log('🔧 clerk-init.js loaded');
-console.log('🔑 Clerk key available:', CLERK_PUBLISHABLE_KEY ? 'YES' : 'NO');
+console.log('🔧 clerk-init.js starting...');
 
-// Prevent Clerk from auto-initializing
-if (window.Clerk) {
-  console.log('⚠️ Clerk already loaded, initializing immediately');
-  initializeClerkNow();
+// CRITICAL: Block Clerk from auto-initializing
+window.__clerk_publishable_key = undefined;
+window.__clerk_frontend_api = undefined;
+
+// Set our custom initialization flag
+window.CLERK_MANUAL_INIT = true;
+
+console.log('🚫 Blocked Clerk auto-initialization');
+console.log('🔑 Our key ready:', CLERK_PUBLISHABLE_KEY ? 'YES' : 'NO');
+
+// Wait for DOM to be ready, then initialize
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initClerkManually);
 } else {
-  console.log('⏳ Waiting for Clerk to load...');
-  // Wait for Clerk to load, then initialize
-  const checkClerk = setInterval(() => {
-    if (window.Clerk) {
-      clearInterval(checkClerk);
-      console.log('✅ Clerk loaded, initializing...');
-      initializeClerkNow();
-    }
-  }, 50);
-
-  // Timeout after 10 seconds
-  setTimeout(() => {
-    clearInterval(checkClerk);
-    if (!window.Clerk) {
-      console.error('❌ Clerk failed to load after 10 seconds');
-      showError('Authentication service failed to load. Please refresh the page.');
-    }
-  }, 10000);
+  initClerkManually();
 }
 
-async function initializeClerkNow() {
+async function initClerkManually() {
+  console.log('🚀 Starting manual Clerk initialization...');
+
   try {
-    // Validate key
-    if (!CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY === 'pk_test_YOUR_ACTUAL_KEY_HERE') {
-      throw new Error('Clerk publishable key not configured');
+    // Validate our key
+    if (!CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY.includes('YOUR_ACTUAL_KEY')) {
+      throw new Error('Clerk publishable key not configured properly');
     }
 
-    console.log('🚀 Initializing Clerk with key:', CLERK_PUBLISHABLE_KEY.substring(0, 20) + '...');
+    // Wait for Clerk library to be available
+    let attempts = 0;
+    while (!window.Clerk && attempts < 100) {
+      console.log('⏳ Waiting for Clerk library... attempt', attempts + 1);
+      await new Promise(resolve => setTimeout(resolve, 50));
+      attempts++;
+    }
 
-    // Initialize Clerk
+    if (!window.Clerk) {
+      throw new Error('Clerk library failed to load');
+    }
+
+    console.log('✅ Clerk library found, initializing...');
+
+    // Initialize Clerk with our key
     await window.Clerk.load({
-      publishableKey: CLERK_PUBLISHABLE_KEY
+      publishableKey: CLERK_PUBLISHABLE_KEY,
+      appearance: {
+        theme: 'light',
+        variables: {
+          colorPrimary: '#667eea'
+        }
+      }
     });
 
     console.log('✅ Clerk initialized successfully!');
 
-    // Set ready flag
+    // Set ready flags
     window.clerkReady = true;
+    window.clerkInstance = window.Clerk;
 
     // Notify other scripts
-    window.dispatchEvent(new CustomEvent('clerk-ready'));
+    window.dispatchEvent(new CustomEvent('clerk-ready', {
+      detail: { clerk: window.Clerk }
+    }));
 
-    return true;
+    console.log('📡 Clerk ready event dispatched');
 
   } catch (error) {
     console.error('❌ Clerk initialization failed:', error);
-    showError('Authentication failed: ' + error.message);
-    return false;
+    
+    // Show error to user
+    showInitializationError(error.message);
   }
 }
 
-function showError(message) {
-  // Create error overlay
-  const errorDiv = document.createElement('div');
-  errorDiv.innerHTML = `
+function showInitializationError(message) {
+  // Remove any existing error modals
+  const existing = document.getElementById('clerk-error-modal');
+  if (existing) existing.remove();
+
+  // Create error modal
+  const errorModal = document.createElement('div');
+  errorModal.id = 'clerk-error-modal';
+  errorModal.innerHTML = `
     <div style="
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
-      color: white;
+      z-index: 99999;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     ">
       <div style="
         background: white;
-        color: #333;
         padding: 2rem;
-        border-radius: 12px;
+        border-radius: 16px;
         text-align: center;
-        max-width: 400px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        max-width: 450px;
+        width: 90%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       ">
-        <div style="color: #ef4444; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-        <h2 style="color: #ef4444; margin-bottom: 1rem;">Authentication Error</h2>
-        <p style="margin-bottom: 2rem; line-height: 1.5;">${message}</p>
-        <button onclick="window.location.reload()" style="
-          background: #667eea;
+        <div style="
+          width: 80px;
+          height: 80px;
+          background: #ef4444;
+          border-radius: 50%;
+          margin: 0 auto 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           color: white;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 16px;
-          font-weight: 500;
-        ">
-          Refresh Page
-        </button>
+          font-size: 2rem;
+        ">⚠️</div>
+        
+        <h2 style="
+          color: #ef4444;
+          margin-bottom: 1rem;
+          font-size: 1.5rem;
+          font-weight: 600;
+        ">Authentication Error</h2>
+        
+        <p style="
+          color: #6b7280;
+          margin-bottom: 1.5rem;
+          line-height: 1.5;
+        ">${message}</p>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <button onclick="window.location.reload()" style="
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+          ">
+            Refresh Page
+          </button>
+          
+          <button onclick="console.log('Debug info:', {clerk: !!window.Clerk, key: '${CLERK_PUBLISHABLE_KEY.substring(0, 20)}...'})" style="
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+          ">
+            Debug Info
+          </button>
+        </div>
       </div>
     </div>
   `;
-  
-  document.body.appendChild(errorDiv);
+
+  document.body.appendChild(errorModal);
 }
