@@ -1,5 +1,5 @@
 // Clerk Initialization - Load this before auth.js
-const CLERK_PUBLISHABLE_KEY = 'pk_test_YOUR_CLERK_PUBLISHABLE_KEY_HERE'; // Replace with your actual key
+const CLERK_PUBLISHABLE_KEY = 'pk_test_ZXhvdGljLWFhcmR2YXJrLTI4LmNsZXJrLmFjY291bnRzLmRldiQ'; // Replace with your actual key
 
 // Initialize Clerk when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
