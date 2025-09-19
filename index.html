@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">DC</span>
+                    <span class="logo-text">DataChamps</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role">Team Member</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Workspace</div>
+                    <a href="index.html" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="tasks.html" class="nav-link">
+                        <i class="fas fa-tasks"></i>
+                        <span>My Tasks</span>
+                        <span class="nav-badge" id="taskBadge">5</span>
+                    </a>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Training Calendar</span>
+                    </a>
+                    <a href="celebrations.html" class="nav-link">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>Celebrations</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Learning & Development</div>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Training & Courses</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-certificate"></i>
+                        <span>Assessments</span>
+                        <span class="nav-badge">2</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-award"></i>
+                        <span>Certifications</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Operations</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Timesheets</span>
+                    </a>
+                    <a href="sop.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>SOPs & Policies</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Onboarding</span>
+                    </a>
+                    <a href="kudos.html" class="nav-link">
+                        <i class="fas fa-heart"></i>
+                        <span>Give Kudos</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Company</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-building"></i>
+                        <span>Company Profile</span>
+                    </a>
+                    <a href="photos.html" class="nav-link">
+                        <i class="fas fa-images"></i>
+                        <span>Company Photos</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p>Welcome to your DataChamps workspace</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search..." class="search-input">
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Quick Action</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-content">
+                        <h2>🎉 Welcome to DataChamps Hangout</h2>
+                        <p>Your new digital hub is live! Access training, track progress, and stay connected with your team all in one place.</p>
+                        <div class="welcome-actions">
+                            <button class="btn btn-primary">Take Tour</button>
+                            <button class="btn btn-outline">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="pendingTasksCount">8</div>
+                            <div class="stat-label">Pending Tasks</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="coursesCount">3</div>
+                            <div class="stat-label">Courses in Progress</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="eventsCount">5</div>
+                            <div class="stat-label">Upcoming Events</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="overdueCount">2</div>
+                            <div class="stat-label">Overdue Items</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Widgets -->
+                <div class="dashboard-grid">
+                    <!-- Today's Celebrations -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Today's Birthdays</h3>
+                            <button class="widget-action">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                        <div class="widget-content">
+                            <div id="todayBirthdays" class="celebrations-loading">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Today's Anniversaries</h3>
+                            <button class="widget-action">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                        <div class="widget-content">
+                            <div id="todayAnniversaries" class="celebrations-loading">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="widget widget-large">
+                        <div class="widget-header">
+                            <h3>Recent Activity</h3>
+                            <button class="widget-action">
+                                <i class="fas fa-refresh"></i>
+                            </button>
+                        </div>
+                        <div class="widget-content">
+                            <div class="activity-list" id="recentActivity">
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Completed Python Basics Course</div>
+                                        <div class="activity-time">2 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Registered for AI Bootcamp</div>
+                                        <div class="activity-time">1 day ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Submitted weekly timesheet</div>
+                                        <div class="activity-time">2 days ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Kudos -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>Recent Kudos</h3>
+                            <a href="kudos.html" class="widget-action">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <div class="widget-content">
+                            <div id="recentKudos" class="kudos-list">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="action-title">Submit Timesheet</div>
+                        </a>
+                        <a href="training.html" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="action-title">Browse Courses</div>
+                        </a>
+                        <a href="celebrations.html" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="action-title">View Events</div>
+                        </a>
+                        <a href="kudos.html" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="action-title">Give Kudos</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to DataChamps Hangout</h2>
+                <p>Please sign in with your DataChamps account</p>
+            </div>
+            <div class="modal-body">
+                <div id="clerk-signin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
