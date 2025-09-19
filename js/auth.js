@@ -46,22 +46,24 @@ class AuthManager {
   }
 
   async initializeClerk() {
-    try {
-      this.clerk = window.Clerk;
-      
-      // Load Clerk with your publishable key
-      await this.clerk.load({
-        publishableKey: CLERK_PUBLISHABLE_KEY
-      });
-      
-      console.log('Clerk loaded successfully');
-      this.isInitialized = true;
-      
-    } catch (error) {
-      console.error('Failed to initialize Clerk:', error);
-      throw error;
-    }
+  try {
+    console.log('Initializing Clerk with key:', CLERK_PUBLISHABLE_KEY);
+    
+    this.clerk = window.Clerk;
+    
+    // This is the correct way to initialize Clerk
+    await this.clerk.load({
+      publishableKey: CLERK_PUBLISHABLE_KEY
+    });
+    
+    console.log('Clerk initialized successfully');
+    this.isInitialized = true;
+    
+  } catch (error) {
+    console.error('Failed to initialize Clerk:', error);
+    throw error;
   }
+}
 
   async checkAuthStatus() {
     try {
@@ -270,3 +272,4 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Initializing auth manager...');
   window.auth = new AuthManager();
 });
+
