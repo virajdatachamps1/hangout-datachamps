@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - Celebrations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">DC</span>
+                    <span class="logo-text">DataChamps</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role">Team Member</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Workspace</div>
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="tasks.html" class="nav-link">
+                        <i class="fas fa-tasks"></i>
+                        <span>My Tasks</span>
+                        <span class="nav-badge" id="taskBadge">5</span>
+                    </a>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Training Calendar</span>
+                    </a>
+                    <a href="celebrations.html" class="nav-link active">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>Celebrations</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Learning & Development</div>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Training & Courses</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-certificate"></i>
+                        <span>Assessments</span>
+                        <span class="nav-badge">2</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-award"></i>
+                        <span>Certifications</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Operations</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Timesheets</span>
+                    </a>
+                    <a href="sop.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>SOPs & Policies</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Onboarding</span>
+                    </a>
+                    <a href="kudos.html" class="nav-link">
+                        <i class="fas fa-heart"></i>
+                        <span>Give Kudos</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Company</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-building"></i>
+                        <span>Company Profile</span>
+                    </a>
+                    <a href="photos.html" class="nav-link">
+                        <i class="fas fa-images"></i>
+                        <span>Company Photos</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>🎉 Celebrations</h1>
+                    <p>Celebrate birthdays, anniversaries, and special events with your team</p>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Today's Celebrations -->
+                <div class="today-celebrations">
+                    <h2>Today's Celebrations</h2>
+                    <div class="celebration-cards">
+                        <div class="celebration-card birthdays">
+                            <div class="celebration-icon">
+                                <i class="fas fa-birthday-cake"></i>
+                            </div>
+                            <div class="celebration-content">
+                                <h3>Birthdays</h3>
+                                <div id="todayBirthdaysList" class="celebration-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="celebration-card anniversaries">
+                            <div class="celebration-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="celebration-content">
+                                <h3>Work Anniversaries</h3>
+                                <div id="todayAnniversariesList" class="celebration-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="celebration-card events">
+                            <div class="celebration-icon">
+                                <i class="fas fa-calendar-star"></i>
+                            </div>
+                            <div class="celebration-content">
+                                <h3>Special Events</h3>
+                                <div id="todayEventsList" class="celebration-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Celebrations -->
+                <div class="upcoming-celebrations">
+                    <div class="celebrations-grid">
+                        <!-- Upcoming Birthdays -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-birthday-cake"></i>
+                                    Upcoming Birthdays
+                                </h3>
+                                <span class="widget-subtitle">Next 30 days</span>
+                            </div>
+                            <div class="widget-content">
+                                <div id="upcomingBirthdaysList" class="upcoming-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading birthdays...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Anniversaries -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-award"></i>
+                                    Upcoming Anniversaries
+                                </h3>
+                                <span class="widget-subtitle">Next 30 days</span>
+                            </div>
+                            <div class="widget-content">
+                                <div id="upcomingAnniversariesList" class="upcoming-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading anniversaries...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-calendar-star"></i>
+                                    Upcoming Events
+                                </h3>
+                                <span class="widget-subtitle">Next 30 days</span>
+                            </div>
+                            <div class="widget-content">
+                                <div id="upcomingEventsList" class="upcoming-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading events...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Celebration Calendar -->
+                <div class="celebration-calendar">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-calendar"></i>
+                                Celebration Calendar
+                            </h3>
+                            <div class="calendar-controls">
+                                <button class="btn btn-sm" id="prevMonth">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span id="currentMonth">September 2025</span>
+                                <button class="btn btn-sm" id="nextMonth">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div id="celebrationCalendar" class="calendar-grid">
+                                <!-- Calendar will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to DataChamps Hangout</h2>
+                <p>Please sign in with your DataChamps account</p>
+            </div>
+            <div class="modal-body">
+                <div id="clerk-signin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
