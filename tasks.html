@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - My Tasks</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">DC</span>
+                    <span class="logo-text">DataChamps</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role">Team Member</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Workspace</div>
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="tasks.html" class="nav-link active">
+                        <i class="fas fa-tasks"></i>
+                        <span>My Tasks</span>
+                        <span class="nav-badge" id="taskBadge">5</span>
+                    </a>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Training Calendar</span>
+                    </a>
+                    <a href="celebrations.html" class="nav-link">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>Celebrations</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Learning & Development</div>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Training & Courses</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-certificate"></i>
+                        <span>Assessments</span>
+                        <span class="nav-badge">2</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-award"></i>
+                        <span>Certifications</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Operations</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Timesheets</span>
+                    </a>
+                    <a href="sop.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>SOPs & Policies</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Onboarding</span>
+                    </a>
+                    <a href="kudos.html" class="nav-link">
+                        <i class="fas fa-heart"></i>
+                        <span>Give Kudos</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Company</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-building"></i>
+                        <span>Company Profile</span>
+                    </a>
+                    <a href="photos.html" class="nav-link">
+                        <i class="fas fa-images"></i>
+                        <span>Company Photos</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>My Tasks</h1>
+                    <p>Organize and track your tasks efficiently</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search tasks..." class="search-input">
+                    </div>
+                    <button class="btn btn-primary" id="addTaskBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Task</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Task Statistics -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalTasksCount">8</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="activeTasksCount">5</div>
+                        <div class="stat-label">Active Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="completedTasksCount">2</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="overdueTasksCount">1</div>
+                        <div class="stat-label">Overdue</div>
+                    </div>
+                </div>
+
+                <!-- Task Board -->
+                <div class="task-board">
+                    <!-- To Do Column -->
+                    <div class="task-column">
+                        <div class="task-column-header">
+                            <h3>To Do</h3>
+                            <span class="task-count" id="todoCount">0</span>
+                        </div>
+                        <div class="task-list" id="todoTasks">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading tasks...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- In Progress Column -->
+                    <div class="task-column">
+                        <div class="task-column-header">
+                            <h3>In Progress</h3>
+                            <span class="task-count" id="inProgressCount">0</span>
+                        </div>
+                        <div class="task-list" id="inProgressTasks">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading tasks...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completed Column -->
+                    <div class="task-column">
+                        <div class="task-column-header">
+                            <h3>Completed</h3>
+                            <span class="task-count" id="completedCount">0</span>
+                        </div>
+                        <div class="task-list" id="completedTasks">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading tasks...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Task</h2>
+                <button class="modal-close" onclick="document.getElementById('taskModal').style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title *</label>
+                        <input type="text" id="taskTitle" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskDescription">Description</label>
+                        <textarea id="taskDescription" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskDueDate">Due Date *</label>
+                            <input type="date" id="taskDueDate" name="dueDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="taskAssignTo">Assign To</label>
+                            <select id="taskAssignTo" name="assignedTo">
+                                <option value="">Myself</option>
+                                <!-- Team members will be populated here -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="document.getElementById('taskModal').style.display='none'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Task
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to DataChamps Hangout</h2>
+                <p>Please sign in with your DataChamps account</p>
+            </div>
+            <div class="modal-body">
+                <div id="clerk-signin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
