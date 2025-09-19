@@ -3,6 +3,7 @@ class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
     this.userData = null;
+    this.isAuthenticated = false; // NEW
     this.appData = {
       tasks: null,
       kudos: null,
@@ -10,18 +11,42 @@ class DataChampsApp {
       training: null,
       stats: null
     };
-    
-    this.init();
+
+    // Wait for authentication before initializing
+    this.waitForAuth();
+  }
+
+  // Wait for authentication manager
+  async waitForAuth() {
+    const checkAuth = () => {
+      if (window.auth && window.auth.isInitialized) {
+        if (window.auth.isAuthenticated()) {
+          this.isAuthenticated = true;
+          this.init();
+        } else {
+          console.log('User not authenticated, waiting for login...');
+          document.addEventListener('user-authenticated', () => {
+            this.isAuthenticated = true;
+            this.init();
+          });
+        }
+      } else {
+        setTimeout(checkAuth, 100);
+      }
+    };
+    checkAuth();
   }
 
   async init() {
-    this.setupEventListeners();
-    this.setActiveNavigation();
-    
-    // Wait for authentication before loading data
-    if (window.auth && window.auth.isAuthenticated()) {
-      await this.loadUserData();
+    if (!this.isAuthenticated) {
+      console.log('App init called but user not authenticated');
+      return;
     }
+
+    console.log('Initializing DataChamps App for page:', this.currentPage);
+
+    this.setupEventListeners();
+    await this.loadUserData();
   }
 
   getCurrentPage() {
@@ -34,11 +59,11 @@ class DataChampsApp {
 
   setActiveNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     navLinks.forEach(link => {
       link.classList.remove('active');
       const href = link.getAttribute('href');
-      
+
       if (
         (this.currentPage === 'index' && (href === 'index.html' || href === '/')) ||
         href.includes(this.currentPage + '.html')
@@ -49,40 +74,33 @@ class DataChampsApp {
   }
 
   setupEventListeners() {
-    // Search functionality
     const searchInput = document.querySelector('.search-input');
     if (searchInput) {
       searchInput.addEventListener('input', this.debounce(this.handleSearch.bind(this), 300));
     }
 
-    // Mobile sidebar toggle
     const sidebarToggle = document.querySelector('.sidebar-toggle');
     if (sidebarToggle) {
       sidebarToggle.addEventListener('click', this.toggleSidebar);
     }
 
-    // Task management (if on tasks page)
     if (this.currentPage === 'tasks') {
       document.addEventListener('click', this.handleTaskActions.bind(this));
       this.setupTaskForm();
     }
 
-    // Kudos management (if on kudos page)
     if (this.currentPage === 'kudos') {
       this.setupKudosForm();
     }
 
-    // Widget click handlers
     this.setupWidgetClicks();
   }
 
   async loadUserData() {
     try {
-      // Load user profile
       this.userData = await window.api.getUserProfile();
-      
-      // Load page-specific data
-      switch(this.currentPage) {
+
+      switch (this.currentPage) {
         case 'index':
           await this.loadDashboardData();
           break;
@@ -107,22 +125,17 @@ class DataChampsApp {
 
   async loadDashboardData() {
     try {
-      // Load dashboard stats
       this.appData.stats = await window.api.getDashboardStats();
       this.updateDashboardStats();
 
-      // Load today's celebrations
       this.appData.celebrations = await window.api.getTodayCelebrations();
       this.displayTodayCelebrations();
 
-      // Load recent activity
       const recentActivity = await window.api.getRecentActivity(5);
       this.displayRecentActivity(recentActivity);
 
-      // Load recent kudos
       const recentKudos = await window.api.getRecentKudos(3);
       this.displayRecentKudos(recentKudos);
-
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     }
@@ -130,9 +143,7 @@ class DataChampsApp {
 
   updateDashboardStats() {
     if (!this.appData.stats) return;
-
     const stats = this.appData.stats;
-    
     this.updateStatCard('pendingTasksCount', stats.pendingTasks || 0);
     this.updateStatCard('coursesCount', stats.coursesInProgress || 0);
     this.updateStatCard('eventsCount', stats.upcomingEvents || 0);
@@ -142,16 +153,12 @@ class DataChampsApp {
 
   updateStatCard(elementId, value) {
     const element = document.getElementById(elementId);
-    if (element) {
-      element.textContent = value;
-    }
+    if (element) element.textContent = value;
   }
 
   displayTodayCelebrations() {
     if (!this.appData.celebrations) return;
-
     const { birthdays, anniversaries } = this.appData.celebrations;
-    
     this.displayCelebrationsList('todayBirthdays', birthdays, 'birthday');
     this.displayCelebrationsList('todayAnniversaries', anniversaries, 'anniversary');
   }
@@ -159,7 +166,7 @@ class DataChampsApp {
   displayCelebrationsList(containerId, items, type) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    
+
     if (!items || items.length === 0) {
       container.innerHTML = '<div class="celebrations-none">None today</div>';
       return;
@@ -200,8 +207,7 @@ class DataChampsApp {
           <div class="activity-title">${activity.title}</div>
           <div class="activity-time">${this.formatTimeAgo(activity.timestamp)}</div>
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
 
     container.innerHTML = activityHTML;
   }
@@ -220,8 +226,7 @@ class DataChampsApp {
         <div class="kudos-from">From: ${kudo.fromUser}</div>
         <div class="kudos-message">"${kudo.message}"</div>
         <div class="kudos-time">${this.formatTimeAgo(kudo.createdAt)}</div>
-      </div>
-    `).join('');
+      </div>`).join('');
 
     container.innerHTML = kudosHTML;
   }
@@ -240,7 +245,6 @@ class DataChampsApp {
     if (!this.appData.tasks) return;
 
     const { todo, inProgress, completed } = this.appData.tasks;
-    
     this.renderTaskColumn('todo', todo || []);
     this.renderTaskColumn('inProgress', inProgress || []);
     this.renderTaskColumn('completed', completed || []);
@@ -262,34 +266,26 @@ class DataChampsApp {
         <div class="task-card-actions">
           ${this.getTaskActions(columnId)}
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
 
     container.innerHTML = taskHTML;
-    
-    // Update task count
+
     const countElement = document.getElementById(columnId + 'Count');
-    if (countElement) {
-      countElement.textContent = tasks.length;
-    }
+    if (countElement) countElement.textContent = tasks.length;
   }
 
   getTaskActions(status) {
-    switch(status) {
+    switch (status) {
       case 'todo':
         return `
           <button class="task-action btn-primary" data-action="start">Start</button>
-          <button class="task-action btn-success" data-action="complete">Complete</button>
-        `;
+          <button class="task-action btn-success" data-action="complete">Complete</button>`;
       case 'inProgress':
         return `
           <button class="task-action btn-secondary" data-action="todo">Move to Todo</button>
-          <button class="task-action btn-success" data-action="complete">Complete</button>
-        `;
+          <button class="task-action btn-success" data-action="complete">Complete</button>`;
       case 'completed':
-        return `
-          <button class="task-action btn-secondary" data-action="reopen">Reopen</button>
-        `;
+        return `<button class="task-action btn-secondary" data-action="reopen">Reopen</button>`;
       default:
         return '';
     }
@@ -297,42 +293,28 @@ class DataChampsApp {
 
   async handleTaskActions(event) {
     if (!event.target.classList.contains('task-action')) return;
-    
+
     const action = event.target.getAttribute('data-action');
     const taskCard = event.target.closest('.task-card');
     const taskId = taskCard.getAttribute('data-task-id');
     const currentStatus = taskCard.getAttribute('data-status');
-    
+
     await this.moveTask(taskId, currentStatus, action);
   }
 
   async moveTask(taskId, fromStatus, action) {
     try {
-      // Determine target status
       let toStatus;
-      switch(action) {
-        case 'start':
-          toStatus = 'inProgress';
-          break;
-        case 'complete':
-          toStatus = 'completed';
-          break;
-        case 'todo':
-          toStatus = 'todo';
-          break;
-        case 'reopen':
-          toStatus = 'todo';
-          break;
+      switch (action) {
+        case 'start': toStatus = 'inProgress'; break;
+        case 'complete': toStatus = 'completed'; break;
+        case 'todo': toStatus = 'todo'; break;
+        case 'reopen': toStatus = 'todo'; break;
       }
 
-      // Update task in backend
       await window.api.moveTask(taskId, toStatus);
-      
-      // Reload tasks data
       await this.loadTasksData();
-      
       window.api.showSuccessNotification('Task moved successfully!');
-      
     } catch (error) {
       console.error('Failed to move task:', error);
       window.api.handleError(error, 'moveTask');
@@ -340,20 +322,66 @@ class DataChampsApp {
   }
 
   setupTaskForm() {
-    const taskForm = document.getElementById('taskForm');
-    if (taskForm) {
-      taskForm.addEventListener('submit', this.handleTaskSubmit.bind(this));
-    }
-
     const addTaskBtn = document.getElementById('addTaskBtn');
     if (addTaskBtn) {
-      addTaskBtn.addEventListener('click', this.showTaskModal.bind(this));
+      addTaskBtn.addEventListener('click', () => {
+        console.log('Add Task button clicked');
+        this.showTaskModal();
+      });
+    }
+
+    const taskForm = document.getElementById('taskForm');
+    if (taskForm) {
+      taskForm.addEventListener('submit', (e) => {
+        console.log('Task form submitted');
+        this.handleTaskSubmit(e);
+      });
+    }
+
+    this.loadTeamMembersForTasks();
+  }
+
+  showTaskModal() {
+    const modal = document.getElementById('taskModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      console.log('Task modal displayed');
+    } else {
+      console.error('Task modal not found');
+    }
+  }
+
+  hideTaskModal() {
+    const modal = document.getElementById('taskModal');
+    if (modal) {
+      modal.style.display = 'none';
+      const form = document.getElementById('taskForm');
+      if (form) form.reset();
+    }
+  }
+
+  async loadTeamMembersForTasks() {
+    try {
+      const teamMembers = await window.api.getTeamMembers();
+      const select = document.getElementById('taskAssignTo');
+      if (select && teamMembers) {
+        select.innerHTML = '<option value="">Myself</option>';
+        teamMembers.forEach(member => {
+          const option = document.createElement('option');
+          option.value = member.email;
+          option.textContent = member.name;
+          select.appendChild(option);
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load team members:', error);
     }
   }
 
   async handleTaskSubmit(event) {
     event.preventDefault();
-    
+    console.log('Handling task submission');
+
     const formData = new FormData(event.target);
     const taskData = {
       title: formData.get('title'),
@@ -363,14 +391,18 @@ class DataChampsApp {
       status: 'todo'
     };
 
+    console.log('Task data:', taskData);
+
     try {
-      await window.api.createTask(taskData);
+      const result = await window.api.createTask(taskData);
+      console.log('Task created successfully:', result);
+
       await this.loadTasksData();
       this.hideTaskModal();
       window.api.showSuccessNotification('Task created successfully!');
     } catch (error) {
       console.error('Failed to create task:', error);
-      window.api.handleError(error, 'createTask');
+      window.api.showErrorNotification('Failed to create task. Please try again.');
     }
   }
 
@@ -393,7 +425,7 @@ class DataChampsApp {
 
   async handleKudosSubmit(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(event.target);
     const kudosData = {
       toUser: formData.get('toUser'),
@@ -433,7 +465,6 @@ class DataChampsApp {
   }
 
   setupWidgetClicks() {
-    // Make celebration widgets clickable
     const celebrationWidgets = document.querySelectorAll('.widget');
     celebrationWidgets.forEach(widget => {
       const header = widget.querySelector('.widget-header h3');
@@ -448,51 +479,28 @@ class DataChampsApp {
 
   handleSearch(event) {
     const query = event.target.value.toLowerCase();
-    // Implement search logic based on current page
     console.log('Searching for:', query);
-    // TODO: Implement search functionality
   }
 
   toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
-    if (sidebar) {
-      sidebar.classList.toggle('mobile-open');
-    }
+    if (sidebar) sidebar.classList.toggle('mobile-open');
   }
 
-  showTaskModal() {
-    const modal = document.getElementById('taskModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    }
-  }
-
-  hideTaskModal() {
-    const modal = document.getElementById('taskModal');
-    if (modal) {
-      modal.style.display = 'none';
-    }
-  }
-
-  // Utility functions
   formatDate(dateString) {
     const date = new Date(dateString);
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today';
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return 'Tomorrow';
-    } else {
-      return date.toLocaleDateString('en-US', { 
-        weekday: 'short',
-        month: 'short', 
-        day: 'numeric',
-        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
-      });
-    }
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === tomorrow.toDateString()) return 'Tomorrow';
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+    });
   }
 
   formatTimeAgo(timestamp) {
@@ -504,7 +512,6 @@ class DataChampsApp {
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    
     return time.toLocaleDateString();
   }
 
@@ -519,7 +526,6 @@ class DataChampsApp {
       login: 'fas fa-sign-in-alt',
       default: 'fas fa-info-circle'
     };
-    
     return icons[type] || icons.default;
   }
 
