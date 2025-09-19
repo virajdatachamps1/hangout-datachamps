@@ -1,4 +1,4 @@
-// Complete Auth Manager - Timing Fixed
+// Simple Working Auth Manager
 class AuthManager {
   constructor() {
     this.clerk = null;
@@ -6,49 +6,33 @@ class AuthManager {
     this.isReady = false;
     
     console.log('🔧 Creating Auth Manager...');
-    
-    // Wait for Clerk to be properly initialized
-    this.waitForClerk();
+    this.init();
   }
 
-  waitForClerk() {
-    if (window.clerkReady && window.Clerk) {
-      console.log('✅ Clerk already ready, starting auth...');
-      this.start();
-    } else {
-      console.log('⏳ Waiting for Clerk to be ready...');
-      
-      // Listen for clerk-ready event
-      window.addEventListener('clerk-ready', () => {
-        console.log('🎯 Clerk ready event received');
+  init() {
+    // Wait for Clerk to be ready
+    const checkClerkReady = () => {
+      if (window.clerkReady && window.Clerk) {
+        console.log('✅ Clerk is ready, starting auth...');
         this.start();
-      });
+      } else {
+        console.log('⏳ Waiting for Clerk...');
+        setTimeout(checkClerkReady, 200);
+      }
+    };
 
-      // Fallback: poll for Clerk readiness
-      const checkReady = setInterval(() => {
-        if (window.clerkReady && window.Clerk) {
-          clearInterval(checkReady);
-          console.log('🎯 Clerk ready via polling');
-          this.start();
-        }
-      }, 100);
+    // Listen for clerk-ready event
+    window.addEventListener('clerk-ready', () => {
+      console.log('🎯 Clerk ready event received');
+      this.start();
+    });
 
-      // Timeout after 15 seconds
-      setTimeout(() => {
-        clearInterval(checkReady);
-        if (!this.isReady) {
-          console.error('❌ Auth manager timeout - Clerk not ready');
-          this.showError('Authentication service is not responding. Please refresh the page.');
-        }
-      }, 15000);
-    }
+    // Start checking
+    checkClerkReady();
   }
 
   start() {
-    if (this.isReady) {
-      console.log('⚠️ Auth manager already started');
-      return;
-    }
+    if (this.isReady) return;
 
     console.log('🚀 Starting Auth Manager...');
     
@@ -56,7 +40,14 @@ class AuthManager {
     this.isReady = true;
     
     // Check current auth state
-    this.checkAuthState();
+    if (this.clerk.user) {
+      console.log('✅ User already signed in');
+      this.user = this.clerk.user;
+      this.handleSignIn();
+    } else {
+      console.log('❌ No user signed in, showing login modal');
+      this.showSignInModal();
+    }
     
     // Listen for auth changes
     this.clerk.addListener(({ user }) => {
@@ -67,24 +58,9 @@ class AuthManager {
         this.handleSignIn();
       } else {
         this.user = null;
-        this.handleSignOut();
+        this.showSignInModal();
       }
     });
-
-    console.log('✅ Auth Manager started successfully');
-  }
-
-  checkAuthState() {
-    console.log('🔍 Checking current auth state...');
-    
-    if (this.clerk.user) {
-      console.log('✅ User already signed in:', this.clerk.user.primaryEmailAddress?.emailAddress);
-      this.user = this.clerk.user;
-      this.handleSignIn();
-    } else {
-      console.log('❌ No user signed in, showing login modal');
-      this.handleSignOut();
-    }
   }
 
   handleSignIn() {
@@ -93,8 +69,8 @@ class AuthManager {
     
     // Check domain restriction
     if (!email || !email.endsWith('@datachamps.ai')) {
-      console.log('❌ Domain check failed for:', email);
-      alert('Please use your @datachamps.ai email address to access DataChamps Hangout.');
+      console.log('❌ Domain check failed');
+      alert('Please use your @datachamps.ai email address.');
       this.clerk.signOut();
       return;
     }
@@ -107,27 +83,15 @@ class AuthManager {
     // Update UI
     this.updateUI();
     
-    // Register user
-    this.registerUser();
-    
-    // Notify app that user is authenticated
+    // Notify app
     setTimeout(() => {
       console.log('📡 Dispatching user-authenticated event');
       window.dispatchEvent(new Event('user-authenticated'));
     }, 500);
   }
 
-  handleSignOut() {
-    console.log('🚪 Handling sign out');
-    this.user = null;
-    this.clearUI();
-    this.showSignInModal();
-  }
-
   updateUI() {
-    console.log('🎨 Updating UI for user:', this.user?.fullName);
-    
-    // Update username
+    // Update username in sidebar
     const userName = document.getElementById('userName');
     if (userName) {
       const displayName = this.user.fullName || this.user.firstName || 'User';
@@ -147,18 +111,6 @@ class AuthManager {
     }
   }
 
-  clearUI() {
-    const userName = document.getElementById('userName');
-    if (userName) {
-      userName.textContent = 'Loading...';
-    }
-    
-    const userAvatar = document.getElementById('userAvatar');
-    if (userAvatar) {
-      userAvatar.innerHTML = '<i class="fas fa-user"></i>';
-    }
-  }
-
   getInitials(name) {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   }
@@ -168,9 +120,7 @@ class AuthManager {
     
     // Remove existing modal
     const existingModal = document.getElementById('authModal');
-    if (existingModal) {
-      existingModal.remove();
-    }
+    if (existingModal) existingModal.remove();
     
     // Create modal
     const modal = document.createElement('div');
@@ -187,104 +137,59 @@ class AuthManager {
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        backdrop-filter: blur(5px);
       ">
         <div style="
           background: white;
-          padding: 2.5rem;
-          border-radius: 16px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          padding: 2rem;
+          border-radius: 12px;
           text-align: center;
-          max-width: 420px;
+          max-width: 400px;
           width: 90%;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         ">
-          <!-- Logo -->
           <div style="
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 32px;
+            font-size: 24px;
             font-weight: bold;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
           ">DC</div>
           
-          <h2 style="
-            margin: 0 0 0.5rem 0; 
-            color: #1f2937; 
-            font-size: 1.5rem;
-            font-weight: 600;
-          ">Welcome to DataChamps</h2>
-          
-          <p style="
-            color: #6b7280; 
-            margin: 0 0 2rem 0; 
-            font-size: 1rem;
-            line-height: 1.5;
-          ">Please sign in with your @datachamps.ai email to access your workspace</p>
+          <h2 style="margin: 0 0 0.5rem 0; color: #1f2937;">Welcome to DataChamps</h2>
+          <p style="color: #6b7280; margin: 0 0 2rem 0;">Please sign in with your @datachamps.ai email</p>
           
           <button id="signInBtn" style="
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 14px 28px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
           ">
-            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
             Sign In with Email
           </button>
-          
-          <div id="authError" style="
-            color: #dc2626;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
-            font-size: 14px;
-          "></div>
-          
-          <p style="
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: #9ca3af;
-          ">
-            Need access? Contact your administrator
-          </p>
         </div>
       </div>
     `;
     
     document.body.appendChild(modal);
 
-    // Add hover effect
-    const signInBtn = document.getElementById('signInBtn');
-    signInBtn.addEventListener('mouseenter', () => {
-      signInBtn.style.transform = 'translateY(-2px)';
-      signInBtn.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.5)';
-    });
-    
-    signInBtn.addEventListener('mouseleave', () => {
-      signInBtn.style.transform = 'translateY(0)';
-      signInBtn.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
-    });
-
     // Add click handler
-    signInBtn.addEventListener('click', () => {
-      console.log('🔐 Sign-in button clicked');
-      this.initiateSignIn();
+    document.getElementById('signInBtn').addEventListener('click', () => {
+      console.log('🔐 Opening Clerk sign-in...');
+      this.clerk.openSignIn().catch(error => {
+        console.error('❌ Sign-in error:', error);
+        alert('Sign-in failed: ' + error.message);
+      });
     });
   }
 
@@ -293,83 +198,6 @@ class AuthManager {
     if (modal) {
       console.log('✅ Hiding sign-in modal');
       modal.remove();
-    }
-  }
-
-  async initiateSignIn() {
-    try {
-      console.log('🚀 Initiating sign-in process...');
-      
-      const signInBtn = document.getElementById('signInBtn');
-      const originalContent = signInBtn.innerHTML;
-      
-      // Show loading state
-      signInBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>Loading...';
-      signInBtn.disabled = true;
-      
-      // Open Clerk sign-in
-      await this.clerk.openSignIn({
-        afterSignInUrl: window.location.href,
-        appearance: {
-          theme: 'light',
-          variables: {
-            colorPrimary: '#667eea'
-          }
-        }
-      });
-      
-    } catch (error) {
-      console.error('❌ Sign-in error:', error);
-      this.showSignInError('Sign-in failed: ' + error.message);
-      
-      // Restore button
-      const signInBtn = document.getElementById('signInBtn');
-      if (signInBtn) {
-        signInBtn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Sign In with Email';
-        signInBtn.disabled = false;
-      }
-    }
-  }
-
-  showSignInError(message) {
-    const errorDiv = document.getElementById('authError');
-    if (errorDiv) {
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-      
-      // Auto-hide after 5 seconds
-      setTimeout(() => {
-        errorDiv.style.display = 'none';
-      }, 5000);
-    }
-  }
-
-  showError(message) {
-    console.error('🚨 Auth Error:', message);
-    alert('Authentication Error: ' + message);
-  }
-
-  async registerUser() {
-    if (!window.api) {
-      console.warn('⚠️ API not available for user registration');
-      return;
-    }
-    
-    try {
-      const userData = {
-        email: this.user.primaryEmailAddress?.emailAddress,
-        name: this.user.fullName || this.user.firstName || 'User',
-        role: 'Team Member',
-        lastLogin: new Date().toISOString()
-      };
-      
-      console.log('👤 Registering user:', userData);
-      await window.api.registerUser(userData);
-      console.log('✅ User registered successfully');
-      
-    } catch (error) {
-      console.warn('⚠️ User registration failed:', error);
-      // Don't block the user experience for registration failures
     }
   }
 
@@ -392,14 +220,20 @@ class AuthManager {
       await this.clerk.signOut();
     }
   }
-
-  async logout() {
-    return this.signOut();
-  }
 }
 
-// Initialize auth manager when DOM is ready
+// Initialize when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
   console.log('📱 DOM loaded, creating Auth Manager...');
   window.auth = new AuthManager();
+  
+  // Setup logout button
+  setTimeout(() => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        window.auth.signOut();
+      });
+    }
+  }, 2000);
 });
