@@ -178,6 +178,12 @@
     </div>
 
 <!-- Scripts - Order is CRITICAL -->
+    <!-- Scripts - Updated to prevent auto-init -->
+<script>
+  // Block Clerk auto-initialization BEFORE loading
+  window.__clerk_publishable_key = undefined;
+  window.CLERK_MANUAL_INIT = true;
+</script>
 <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
 <script src="js/clerk-init.js"></script>
 <script src="js/sidebar.js"></script>
@@ -186,6 +192,7 @@
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
