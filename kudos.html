@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - Give Kudos</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">DC</span>
+                    <span class="logo-text">DataChamps</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role">Team Member</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Workspace</div>
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="tasks.html" class="nav-link">
+                        <i class="fas fa-tasks"></i>
+                        <span>My Tasks</span>
+                        <span class="nav-badge" id="taskBadge">5</span>
+                    </a>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-calendar"></i>
+                        <span>Training Calendar</span>
+                    </a>
+                    <a href="celebrations.html" class="nav-link">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>Celebrations</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Learning & Development</div>
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Training & Courses</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-certificate"></i>
+                        <span>Assessments</span>
+                        <span class="nav-badge">2</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-award"></i>
+                        <span>Certifications</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Operations</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Timesheets</span>
+                    </a>
+                    <a href="sop.html" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>SOPs & Policies</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Onboarding</span>
+                    </a>
+                    <a href="kudos.html" class="nav-link active">
+                        <i class="fas fa-heart"></i>
+                        <span>Give Kudos</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Company</div>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-building"></i>
+                        <span>Company Profile</span>
+                    </a>
+                    <a href="photos.html" class="nav-link">
+                        <i class="fas fa-images"></i>
+                        <span>Company Photos</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Give Kudos</h1>
+                    <p>Recognize and appreciate your teammates</p>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="kudos-layout">
+                    <!-- Send Kudos Form -->
+                    <div class="kudos-form-section">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-heart"></i>
+                                    Send Kudos
+                                </h3>
+                            </div>
+                            <div class="widget-content">
+                                <form id="kudosForm">
+                                    <div class="form-group">
+                                        <label for="kudosTo">Send To *</label>
+                                        <select id="kudosTo" name="toUser" required>
+                                            <option value="">Select a team member</option>
+                                            <!-- Team members will be populated here -->
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="kudosCategory">Category</label>
+                                        <select id="kudosCategory" name="category">
+                                            <option value="General">General Recognition</option>
+                                            <option value="Teamwork">Teamwork</option>
+                                            <option value="Innovation">Innovation</option>
+                                            <option value="Leadership">Leadership</option>
+                                            <option value="Problem Solving">Problem Solving</option>
+                                            <option value="Customer Service">Customer Service</option>
+                                            <option value="Quality Work">Quality Work</option>
+                                            <option value="Going Above & Beyond">Going Above & Beyond</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="kudosMessage">Your Message *</label>
+                                        <textarea id="kudosMessage" name="message" rows="4" 
+                                                placeholder="Share why you appreciate this person..." required></textarea>
+                                        <div class="character-count">
+                                            <span id="charCount">0</span>/500 characters
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane"></i>
+                                            Send Kudos
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Quick Kudos Templates -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-magic"></i>
+                                    Quick Templates
+                                </h3>
+                            </div>
+                            <div class="widget-content">
+                                <div class="kudos-templates">
+                                    <button class="template-btn" data-template="Thanks for your amazing teamwork on the recent project! Your collaboration made all the difference.">
+                                        <i class="fas fa-users"></i>
+                                        Teamwork
+                                    </button>
+                                    <button class="template-btn" data-template="Your innovative approach to solving this challenge was brilliant! Thanks for thinking outside the box.">
+                                        <i class="fas fa-lightbulb"></i>
+                                        Innovation
+                                    </button>
+                                    <button class="template-btn" data-template="Thank you for going above and beyond to help the team succeed. Your dedication is truly appreciated!">
+                                        <i class="fas fa-star"></i>
+                                        Above & Beyond
+                                    </button>
+                                    <button class="template-btn" data-template="Your leadership and guidance have been invaluable. Thanks for being such a great mentor and teammate!">
+                                        <i class="fas fa-crown"></i>
+                                        Leadership
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kudos History -->
+                    <div class="kudos-history-section">
+                        <!-- Recent Kudos Received -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-inbox"></i>
+                                    Recent Kudos Received
+                                </h3>
+                            </div>
+                            <div class="widget-content">
+                                <div id="receivedKudos" class="kudos-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading kudos...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Kudos Sent -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-paper-plane"></i>
+                                    Recent Kudos Sent
+                                </h3>
+                            </div>
+                            <div class="widget-content">
+                                <div id="sentKudos" class="kudos-list">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                        Loading kudos...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kudos Statistics -->
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>
+                                    <i class="fas fa-chart-bar"></i>
+                                    Your Kudos Stats
+                                </h3>
+                            </div>
+                            <div class="widget-content">
+                                <div class="kudos-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-number" id="totalReceived">0</div>
+                                        <div class="stat-label">Received</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-number" id="totalSent">0</div>
+                                        <div class="stat-label">Sent</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-number" id="thisMonth">0</div>
+                                        <div class="stat-label">This Month</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to DataChamps Hangout</h2>
+                <p>Please sign in with your DataChamps account</p>
+            </div>
+            <div class="modal-body">
+                <div id="clerk-signin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        // Kudos-specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // Character count for message
+            const messageTextarea = document.getElementById('kudosMessage');
+            const charCount = document.getElementById('charCount');
+            
+            if (messageTextarea && charCount) {
+                messageTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    charCount.textContent = count;
+                    
+                    if (count > 500) {
+                        charCount.style.color = '#ef4444';
+                    } else {
+                        charCount.style.color = '#6b7280';
+                    }
+                });
+            }
+            
+            // Template buttons
+            const templateButtons = document.querySelectorAll('.template-btn');
+            templateButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const template = this.getAttribute('data-template');
+                    if (messageTextarea) {
+                        messageTextarea.value = template;
+                        messageTextarea.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
