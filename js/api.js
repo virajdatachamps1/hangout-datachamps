@@ -1,3 +1,12 @@
+// Debug mode - set to false in production
+const DEBUG_MODE = true;
+
+function debugLog(...args) {
+  if (DEBUG_MODE) {
+    console.log('[API DEBUG]', ...args);
+  }
+}
+
 // API Configuration
 const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbx76PT1KpDdP9nQAbaMHgmqe5JE5ibmiPOSVaqzZK2XiJwwkE_sucxEQ_4ShEyA_nA/exec'; // Replace with your Apps Script Web App URL
 // Modified API Manager - Using API Secret instead of JWT
@@ -309,3 +318,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
+
