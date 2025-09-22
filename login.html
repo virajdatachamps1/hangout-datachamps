@@ -197,7 +197,9 @@
   </div>
 
   <script>
-    // IMPORTANT: Replace with your actual Apps Script URL
+    // ============================================
+    // REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT URL
+    // ============================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbx76PT1KpDdP9nQAbaMHgmqe5JE5ibmiPOSVaqzZK2XiJwwkE_sucxEQ_4ShEyA_nA/exec';
 
     const emailStep = document.getElementById('emailStep');
@@ -209,7 +211,9 @@
     const resendOtp = document.getElementById('resendOtp');
     const messageDiv = document.getElementById('message');
 
-    // Send OTP - FIXED with POST request
+    // ============================================
+    // SEND OTP - UPDATED WITH GET REQUEST
+    // ============================================
     sendOtpBtn.addEventListener('click', async () => {
       const email = emailInput.value.trim();
       
@@ -222,35 +226,36 @@
       sendOtpBtn.textContent = 'Sending...';
 
       try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          mode: 'no-cors', // Important for Apps Script
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            action: 'sendOTP',
-            data: { email: email }
-          })
-        });
+        const url = `${API_URL}?action=sendOTP&email=${encodeURIComponent(email)}`;
+        const response = await fetch(url);
+        const result = await response.json();
 
-        // Note: With no-cors, we can't read the response
-        // So we assume success if no error was thrown
-        showMessage('OTP sent! Check your email.', 'success');
-        emailStep.style.display = 'none';
-        otpStep.classList.add('active');
-        otpInput.focus();
-
+        if (result.success) {
+          showMessage(result.data.message, 'success');
+          
+          // Show OTP if email failed (for testing - REMOVE IN PRODUCTION)
+          if (result.data.otp) {
+            showMessage(`Email service failed. Testing OTP: ${result.data.otp}`, 'success');
+          }
+          
+          emailStep.style.display = 'none';
+          otpStep.classList.add('active');
+          otpInput.focus();
+        } else {
+          showMessage(result.error || 'Failed to send OTP', 'error');
+        }
       } catch (error) {
         console.error('Send OTP error:', error);
-        showMessage('Failed to send OTP. Please try again.', 'error');
+        showMessage('Network error. Please try again.', 'error');
       } finally {
         sendOtpBtn.disabled = false;
         sendOtpBtn.textContent = 'Send OTP';
       }
     });
 
-    // Verify OTP - FIXED with POST request
+    // ============================================
+    // VERIFY OTP - UPDATED WITH GET REQUEST
+    // ============================================
     verifyOtpBtn.addEventListener('click', async () => {
       const email = emailInput.value.trim();
       const otp = otpInput.value.trim();
@@ -264,55 +269,17 @@
       verifyOtpBtn.textContent = 'Verifying...';
 
       try {
-        // Use a different approach - redirect through Apps Script
-        const verifyUrl = `${API_URL}?action=verifyOTP&email=${encodeURIComponent(email)}&otp=${otp}&redirect=true`;
-        
-        // Create a hidden form to submit
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = API_URL;
-        form.style.display = 'none';
-        
-        const actionInput = document.createElement('input');
-        actionInput.name = 'action';
-        actionInput.value = 'verifyOTP';
-        form.appendChild(actionInput);
-        
-        const emailInputField = document.createElement('input');
-        emailInputField.name = 'email';
-        emailInputField.value = email;
-        form.appendChild(emailInputField);
-        
-        const otpInputField = document.createElement('input');
-        otpInputField.name = 'otp';
-        otpInputField.value = otp;
-        form.appendChild(otpInputField);
-        
-        document.body.appendChild(form);
-        
-        // Try fetch first
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            action: 'verifyOTP',
-            data: { 
-              email: email,
-              otp: otp
-            }
-          })
-        });
-
+        const url = `${API_URL}?action=verifyOTP&email=${encodeURIComponent(email)}&otp=${otp}`;
+        const response = await fetch(url);
         const result = await response.json();
 
         if (result.success) {
-          // Store session
+          // Store authentication data in localStorage
           localStorage.setItem('authToken', result.data.token);
           localStorage.setItem('tokenExpiresAt', result.data.expiresAt);
           localStorage.setItem('userEmail', result.data.user.email);
           localStorage.setItem('userName', result.data.user.name);
+          localStorage.setItem('userRole', result.data.user.role);
           
           showMessage('Login successful! Redirecting...', 'success');
           
@@ -324,14 +291,16 @@
         }
       } catch (error) {
         console.error('Verify OTP error:', error);
-        showMessage('Verification failed. Please try again.', 'error');
+        showMessage('Network error. Please try again.', 'error');
       } finally {
         verifyOtpBtn.disabled = false;
         verifyOtpBtn.textContent = 'Verify & Sign In';
       }
     });
 
-    // Resend OTP
+    // ============================================
+    // RESEND OTP
+    // ============================================
     resendOtp.addEventListener('click', () => {
       otpStep.classList.remove('active');
       emailStep.style.display = 'block';
@@ -339,13 +308,17 @@
       showMessage('', '');
     });
 
-    // Show message
+    // ============================================
+    // SHOW MESSAGE HELPER
+    // ============================================
     function showMessage(text, type) {
       messageDiv.textContent = text;
       messageDiv.className = `message ${type}`;
     }
 
-    // Auto-focus email on load
+    // ============================================
+    // AUTO-FOCUS EMAIL ON PAGE LOAD
+    // ============================================
     emailInput.focus();
   </script>
 </body>
