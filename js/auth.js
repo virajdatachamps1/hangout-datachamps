@@ -1,7 +1,7 @@
 // auth.js - Custom Authentication Manager
 class AuthManager {
   constructor() {
-    this.apiUrl = 'https://script.google.com/macros/s/AKfycbx76PT1KpDdP9nQAbaMHgmqe5JE5ibmiPOSVaqzZK2XiJwwkE_sucxEQ_4ShEyA_nA/exec';
+    this.apiUrl = 'https://script.google.com/macros/s/AKfycbwh-dRlLIPAIs58APp08QSiH8Tj1jlnuGEcOSDoQtZL490bjEkzMlzf71WyAZGqFj34_w/exec';
     this.checkAuth();
   }
 
@@ -120,3 +120,4 @@ class AuthManager {
 document.addEventListener('DOMContentLoaded', () => {
   window.auth = new AuthManager();
 });
+
