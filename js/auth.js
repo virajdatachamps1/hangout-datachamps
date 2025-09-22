@@ -17,16 +17,6 @@ class AuthManager {
   // ... rest of your auth.js code
 }
 
-// Simple Working Auth Manager
-class AuthManager {
-  constructor() {
-    this.clerk = null;
-    this.user = null;
-    this.isReady = false;
-    
-    console.log('🔧 Creating Auth Manager...');
-    this.init();
-  }
 
   init() {
     // Wait for Clerk to be ready
@@ -256,4 +246,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 2000);
 });
+
 
