@@ -1,7 +1,7 @@
 // auth.js - Custom Authentication Manager
 class AuthManager {
   constructor() {
-    this.apiUrl = 'https://script.google.com/macros/s/AKfycbx76PT1KpDdP9nQAbaMHgmqe5JE5ibmiPOSVaqzZK2XiJwwkE_sucxEQ_4ShEyA_nA/exec'; // Replace with your deployed URL
+    this.apiUrl = 'https://script.google.com/macros/s/AKfycbx76PT1KpDdP9nQAbaMHgmqe5JE5ibmiPOSVaqzZK2XiJwwkE_sucxEQ_4ShEyA_nA/exec';
     this.checkAuth();
   }
 
@@ -14,41 +14,44 @@ class AuthManager {
     const token = localStorage.getItem('authToken');
     const expiresAt = localStorage.getItem('tokenExpiresAt');
     
-    // Check if token exists and hasn't expired
     if (!token || !expiresAt) {
       this.redirectToLogin();
       return;
     }
 
-    // Check if token expired (5 days)
     if (new Date() > new Date(expiresAt)) {
       localStorage.clear();
       this.redirectToLogin();
       return;
     }
 
-    // Validate with server
     await this.validateSession(token);
   }
 
   async validateSession(token) {
     try {
-      const response = await fetch(`${this.apiUrl}?action=validateSession&token=${token}`);
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'validateSession',
+          data: { token: token }
+        })
+      });
+
       const result = await response.json();
 
       if (!result.success || !result.data.valid) {
         localStorage.clear();
         this.redirectToLogin();
       } else {
-        // Store user info
         localStorage.setItem('userEmail', result.data.user.email);
         localStorage.setItem('userName', result.data.user.name);
         localStorage.setItem('userRole', result.data.user.role);
         
-        // Update UI
         this.updateUI(result.data.user);
-        
-        // Notify app that user is authenticated
         window.dispatchEvent(new Event('user-authenticated'));
       }
     } catch (error) {
@@ -93,7 +96,16 @@ class AuthManager {
     
     if (token) {
       try {
-        await fetch(`${this.apiUrl}?action=logout&token=${token}`);
+        await fetch(this.apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'logout',
+            data: { token: token }
+          })
+        });
       } catch (error) {
         console.error('Logout API call failed:', error);
       }
@@ -108,4 +120,3 @@ class AuthManager {
 document.addEventListener('DOMContentLoaded', () => {
   window.auth = new AuthManager();
 });
-
