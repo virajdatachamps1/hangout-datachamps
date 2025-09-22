@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - DataChamps Hangout</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: #667eea;
+      border-radius: 12px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .otp-container {
+      display: none;
+    }
+
+    .otp-container.active {
+      display: block;
+    }
+
+    .resend-link {
+      margin-top: 16px;
+      color: #667eea;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .resend-link:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">DC</div>
+    
+    <h1>Welcome to DataChamps Hangout</h1>
+    <p class="subtitle">Sign in with your @datachamps.ai account</p>
+    
+    <!-- Email Step -->
+    <div id="emailStep">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          placeholder="your.name@datachamps.ai"
+          autocomplete="email"
+        >
+      </div>
+      <button id="sendOtpBtn">Send OTP</button>
+    </div>
+
+    <!-- OTP Step -->
+    <div id="otpStep" class="otp-container">
+      <div class="form-group">
+        <label for="otp">Enter 6-Digit Code</label>
+        <input 
+          type="text" 
+          id="otp" 
+          placeholder="000000"
+          maxlength="6"
+          autocomplete="one-time-code"
+        >
+      </div>
+      <button id="verifyOtpBtn">Verify & Sign In</button>
+      <div class="resend-link" id="resendOtp">Didn't receive code? Resend</div>
+    </div>
+
+    <div id="message"></div>
+    
+    <div class="footer">
+      © 2025 DataChamps
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'YOUR_APPS_SCRIPT_URL_HERE'; // Replace with your deployed Apps Script URL
+
+    const emailStep = document.getElementById('emailStep');
+    const otpStep = document.getElementById('otpStep');
+    const emailInput = document.getElementById('email');
+    const otpInput = document.getElementById('otp');
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const resendOtp = document.getElementById('resendOtp');
+    const messageDiv = document.getElementById('message');
+
+    // Send OTP
+    sendOtpBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      
+      if (!email.endsWith('@datachamps.ai')) {
+        showMessage('Please use your @datachamps.ai email address', 'error');
+        return;
+      }
+
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch(`${API_URL}?action=sendOTP&email=${encodeURIComponent(email)}`);
+        const result = await response.json();
+
+        if (result.success) {
+          showMessage('OTP sent! Check your email.', 'success');
+          emailStep.style.display = 'none';
+          otpStep.classList.add('active');
+          otpInput.focus();
+        } else {
+          showMessage(result.error || 'Failed to send OTP', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.textContent = 'Send OTP';
+      }
+    });
+
+    // Verify OTP
+    verifyOtpBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      const otp = otpInput.value.trim();
+
+      if (otp.length !== 6) {
+        showMessage('Please enter a valid 6-digit code', 'error');
+        return;
+      }
+
+      verifyOtpBtn.disabled = true;
+      verifyOtpBtn.textContent = 'Verifying...';
+
+      try {
+        const response = await fetch(`${API_URL}?action=verifyOTP&email=${encodeURIComponent(email)}&otp=${otp}`);
+        const result = await response.json();
+
+        if (result.success) {
+          // Store session
+          localStorage.setItem('authToken', result.data.token);
+          localStorage.setItem('userEmail', result.data.user.email);
+          localStorage.setItem('userName', result.data.user.name);
+          
+          showMessage('Login successful! Redirecting...', 'success');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+        } else {
+          showMessage(result.error || 'Invalid OTP', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtn.textContent = 'Verify & Sign In';
+      }
+    });
+
+    // Resend OTP
+    resendOtp.addEventListener('click', () => {
+      otpStep.classList.remove('active');
+      emailStep.style.display = 'block';
+      otpInput.value = '';
+      showMessage('', '');
+    });
+
+    // Show message
+    function showMessage(text, type) {
+      messageDiv.textContent = text;
+      messageDiv.className = `message ${type}`;
+    }
+
+    // Auto-focus email on load
+    emailInput.focus();
+  </script>
+</body>
+</html>
