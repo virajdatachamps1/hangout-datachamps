@@ -1,3 +1,22 @@
+//try
+// At the top of auth.js
+class AuthManager {
+  constructor() {
+    this.clerk = null;
+    this.user = null;
+    
+    // Wait for Clerk to load via async script
+    window.addEventListener('load', async () => {
+      if (window.Clerk) {
+        await window.Clerk.load();
+        this.start();
+      }
+    });
+  }
+  
+  // ... rest of your auth.js code
+}
+
 // Simple Working Auth Manager
 class AuthManager {
   constructor() {
@@ -237,3 +256,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 2000);
 });
+
