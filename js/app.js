@@ -1,9 +1,11 @@
 // Main Application Class
 class DataChampsApp {
+  // Main Application Class
+class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
     this.userData = null;
-    this.currentUser = null; // Added for user info
+    this.currentUser = null;
     this.appData = {
       tasks: null,
       kudos: null,
@@ -15,7 +17,7 @@ class DataChampsApp {
     // Wait for user authentication
     document.addEventListener('user-authenticated', (event) => {
       console.log('User authenticated, initializing app...');
-      this.currentUser = event.detail.user; // Store user info
+      this.setCurrentUserFromAuth();
       this.init();
     });
 
@@ -23,11 +25,45 @@ class DataChampsApp {
     setTimeout(() => {
       if (window.auth && window.auth.isAuthenticated()) {
         console.log('User already authenticated, initializing app...');
-        this.currentUser = window.auth.getCurrentUser(); // Get current user
+        this.setCurrentUserFromAuth();
         this.init();
       }
     }, 1000);
   }
+
+  // NEW: Get user info from your existing auth system
+  setCurrentUserFromAuth() {
+    try {
+      // Try different ways to get user from your auth system
+      if (window.auth) {
+        // Method 1: Check if auth has user property
+        if (window.auth.user) {
+          this.currentUser = window.auth.user;
+        }
+        // Method 2: Check if auth has getUser method
+        else if (window.auth.getUser && typeof window.auth.getUser === 'function') {
+          this.currentUser = window.auth.getUser();
+        }
+        // Method 3: Check localStorage for user data
+        else {
+          const userEmail = localStorage.getItem('userEmail') || localStorage.getItem('user_email');
+          if (userEmail) {
+            this.currentUser = {
+              email: userEmail,
+              name: userEmail.split('@')[0]
+            };
+          }
+        }
+      }
+      
+      console.log('Current user set to:', this.currentUser);
+    } catch (error) {
+      console.error('Error getting user from auth:', error);
+    }
+  }
+
+  // ... rest of your code stays exactly the same ...
+
 
   async init() {
     console.log('Initializing DataChamps App for page:', this.currentPage);
@@ -645,3 +681,4 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
+
