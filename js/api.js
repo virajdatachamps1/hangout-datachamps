@@ -18,69 +18,63 @@ class APIManager {
     this.apiSecret = API_SECRET;
   }
 
-  async makeRequest(action, data = {}, method = 'POST') {
-    try {
-      // Get user email - but don't require it for all requests
-      const userEmail = window.auth ? window.auth.getUserEmail() : null;
-      
-      debugLog('Making request:', action, 'Method:', method, 'User:', userEmail);
+ async makeRequest(action, data = {}, method = 'POST') {
+  try {
+    const userEmail = window.auth ? window.auth.getUserEmail() : null;
+    
+    debugLog('Making request:', action, 'Method:', method, 'User:', userEmail);
 
-      const requestData = {
+    const requestData = {
+      action,
+      data,
+      user: userEmail,
+      apiSecret: this.apiSecret,
+      timestamp: new Date().toISOString()
+    };
+
+    let url = this.baseURL;
+    let options = { method };
+
+    if (method === 'POST') {
+      options.headers = {
+        'Content-Type': 'text/plain'  // CHANGED: was application/json
+      };
+      options.body = JSON.stringify(requestData);
+    } else {
+      // GET request - NO HEADERS (this avoids CORS preflight)
+      const params = new URLSearchParams({
         action,
-        data,
-        user: userEmail,
+        data: JSON.stringify(data),
+        user: userEmail || '',
         apiSecret: this.apiSecret,
         timestamp: new Date().toISOString()
-      };
-
-      const options = {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Secret': this.apiSecret
-        }
-      };
-
-      // For POST requests, add data to body
-      if (method === 'POST') {
-        options.body = JSON.stringify(requestData);
-      }
-
-      // For GET requests, add data to URL parameters
-      let url = this.baseURL;
-      if (method === 'GET') {
-        const params = new URLSearchParams({
-          action,
-          data: JSON.stringify(data),
-          user: userEmail || '',
-          apiSecret: this.apiSecret,
-          timestamp: new Date().toISOString()
-        });
-        url += `?${params.toString()}`;
-      }
-
-      debugLog('Request URL:', url);
-
-      const response = await fetch(url, options);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      debugLog('API response for', action, ':', result);
-      
-      if (!result.success) {
-        throw new Error(result.error || 'API request failed');
-      }
-
-      return result.data;
-    } catch (error) {
-      console.error(`API Error (${action}):`, error);
-      this.handleError(error, action);
-      throw error;
+      });
+      url += `?${params.toString()}`;
+      // REMOVED: all headers for GET requests
     }
+
+    debugLog('Request URL:', url);
+
+    const response = await fetch(url, options);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    debugLog('API response for', action, ':', result);
+    
+    if (!result.success) {
+      throw new Error(result.error || 'API request failed');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error(`API Error (${action}):`, error);
+    this.handleError(error, action);
+    throw error;
   }
+}
 
   // User Management
   async registerUser(userData) {
@@ -306,5 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
+
 
 
