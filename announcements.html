@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - DataChamps Team</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (same as previous) -->
+       <nav class="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <img src="assets/images/logo.png" alt="DataChamps" onerror="this.innerHTML='<i class=\'fas fa-chart-line\'></i>'">
+                    </div>
+                    <span class="logo-text">DataChamps</span>
+                </a>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-info">
+                    <div class="user-avatar">DC</div>
+                    <div class="user-details">
+                        <h4>DataChamps Team</h4>
+                        <p>Welcome!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <!-- Workspace Section -->
+                <div class="nav-group">
+                    <div class="nav-title">Workspace</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="index.html" class="nav-link active">
+                                <i class="fas fa-home icon"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="tasks.html" class="nav-link">
+                                <i class="fas fa-tasks icon"></i>
+                                My Tasks
+                                <span class="nav-badge">5</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="celebrations.html" class="nav-link">
+                                <i class="fas fa-birthday-cake icon"></i>
+                                Celebrations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="timesheets.html" class="nav-link">
+                                <i class="fas fa-clock icon"></i>
+                                Timesheets
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Learning & Development Section -->
+                <div class="nav-group">
+                    <div class="nav-title">Learning & Development</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="training.html" class="nav-link">
+                                <i class="fas fa-graduation-cap icon"></i>
+                                Training & Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="assessments.html" class="nav-link">
+                                <i class="fas fa-clipboard-check icon"></i>
+                                Assessments
+                                <span class="nav-badge">2</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="certifications.html" class="nav-link">
+                                <i class="fas fa-certificate icon"></i>
+                                Certifications
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Operations Section -->
+                <div class="nav-group">
+                    <div class="nav-title">Operations</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="sop.html" class="nav-link">
+                                <i class="fas fa-book icon"></i>
+                                SOPs & Policies
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="onboarding.html" class="nav-link">
+                                <i class="fas fa-user-plus icon"></i>
+                                Onboarding
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="feedback.html" class="nav-link">
+                                <i class="fas fa-comment-alt icon"></i>
+                                Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Company Profile Section -->
+                <div class="nav-group">
+                    <div class="nav-title">Company Profile</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="announcements.html" class="nav-link">
+                                <i class="fas fa-bullhorn icon"></i>
+                                Announcements
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="profile.html" class="nav-link">
+                                <i class="fas fa-building icon"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="kudos.html" class="nav-link">
+                                <i class="fas fa-images icon"></i>
+                                Kudos
+                            </a>
+                        <li class="nav-item">
+                            <a href="photos.html" class="nav-link">
+                                <i class="fas fa-images icon"></i>
+                                Company Photos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="sample-dashboards.html" class="nav-link">
+                                <i class="fas fa-chart-pie icon"></i>
+                                Sample Dashboards
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="products.html" class="nav-link">
+                                <i class="fas fa-box icon"></i>
+                                Latest Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="settings.html" class="nav-link">
+                                <i class="fas fa-cog icon"></i>
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <h1 class="page-title">Company Announcements</h1>
+                <div class="top-actions">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search announcements...">
+                    </div>
+                    <button class="action-btn" onclick="openAnnouncementModal()">
+                        <i class="fas fa-plus"></i>
+                        New Announcement
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Announcements</button>
+                    <button class="filter-tab" data-filter="urgent">Urgent</button>
+                    <button class="filter-tab" data-filter="general">General</button>
+                    <button class="filter-tab" data-filter="events">Events</button>
+                    <button class="filter-tab" data-filter="policy">Policy Updates</button>
+                </div>
+
+                <!-- Announcements List -->
+                <div class="announcements-container">
+                    <div id="announcementsList" class="announcements-list">
+                        <!-- Announcements will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Pinned Announcements -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h2 class="widget-title">
+                            <i class="fas fa-thumbtack"></i>
+                            Pinned Announcements
+                        </h2>
+                    </div>
+                    <div class="widget-content">
+                        <div id="pinnedAnnouncements">
+                            <!-- Pinned announcements will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Announcement Modal -->
+    <div id="announcementModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Announcement</h3>
+                <button class="modal-close" onclick="closeAnnouncementModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="announcementForm">
+                    <div class="form-group">
+                        <label>Title:</label>
+                        <input type="text" id="announcementTitle" required placeholder="Enter announcement title">
+                    </div>
+                    <div class="form-group">
+                        <label>Category:</label>
+                        <select id="announcementCategory" required>
+                            <option value="">Select category</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="general">General</option>
+                            <option value="events">Events</option>
+                            <option value="policy">Policy Updates</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Content:</label>
+                        <textarea id="announcementContent" rows="6" required placeholder="Write your announcement content..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="announcementPinned">
+                            Pin this announcement
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Announcement</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnnouncements();
+            loadPinnedAnnouncements();
+            setupFilterTabs();
+            setupAnnouncementForm();
+        });
+
+        function loadAnnouncements() {
+            const container = document.getElementById('announcementsList');
+            const announcements = [
+                {
+                    id: 1,
+                    title: 'Q3 Company All-Hands Meeting',
+                    content: 'Join us for our quarterly all-hands meeting on Friday, September 22nd at 2:00 PM. We\'ll be discussing Q3 results, upcoming initiatives, and celebrating team achievements.',
+                    category: 'events',
+                    author: 'Sarah Johnson',
+                    date: '2025-09-15',
+                    priority: 'high',
+                    pinned: false,
+                    likes: 24,
+                    comments: 8
+                },
+                {
+                    id: 2,
+                    title: 'New Remote Work Policy Updates',
+                    content: 'We\'ve updated our remote work policy to provide more flexibility. The new policy allows for up to 3 days of remote work per week. Please review the updated guidelines in the employee handbook.',
+                    category: 'policy',
+                    author: 'HR Team',
+                    date: '2025-09-14',
+                    priority: 'urgent',
+                    pinned: true,
+                    likes: 45,
+                    comments: 15
+                },
+                {
+                    id: 3,
+                    title: 'DataChamps Celebrates 5th Anniversary!',
+                    content: 'This month marks DataChamps\' 5th anniversary! Thank you to all team members for your dedication and hard work. Join us for the celebration party on September 30th.',
+                    category: 'general',
+                    author: 'Management Team',
+                    date: '2025-09-12',
+                    priority: 'normal',
+                    pinned: false,
+                    likes: 67,
+                    comments: 22
+                },
+                {
+                    id: 4,
+                    title: 'New AI Ethics Training Module Available',
+                    content: 'We\'ve launched a new AI Ethics training module. All team members in AI/ML roles must complete this training by October 15th. The module covers responsible AI development and deployment practices.',
+                    category: 'general',
+                    author: 'Learning & Development',
+                    date: '2025-09-10',
+                    priority: 'normal',
+                    pinned: false,
+                    likes: 31,
+                    comments: 6
+                }
+            ];
+
+            const html = announcements.map(announcement => `
+                <div class="announcement-card ${announcement.priority}" data-category="${announcement.category}">
+                    <div class="announcement-header">
+                        <div class="announcement-title-section">
+                            <h3 class="announcement-title">${announcement.title}</h3>
+                            <div class="announcement-meta">
+                                <span class="announcement-author">by ${announcement.author}</span>
+                                <span class="announcement-date">${formatDate(announcement.date)}</span>
+                                <span class="announcement-category category-${announcement.category}">${announcement.category}</span>
+                                ${announcement.priority === 'urgent' ? '<span class="priority-badge urgent">Urgent</span>' : ''}
+                                ${announcement.pinned ? '<i class="fas fa-thumbtack pinned-icon"></i>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="announcement-content">
+                        <p>${announcement.content}</p>
+                    </div>
+                    <div class="announcement-actions">
+                        <button class="action-button" onclick="toggleLike(${announcement.id})">
+                            <i class="fas fa-heart"></i> ${announcement.likes}
+                        </button>
+                        <button class="action-button" onclick="showComments(${announcement.id})">
+                            <i class="fas fa-comment"></i> ${announcement.comments}
+                        </button>
+                        <button class="action-button" onclick="shareAnnouncement(${announcement.id})">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function loadPinnedAnnouncements() {
+            const container = document.getElementById('pinnedAnnouncements');
+            const pinnedAnnouncements = [
+                {
+                    title: 'New Remote Work Policy Updates',
+                    excerpt: 'Updated remote work policy allows up to 3 days of remote work per week...',
+                    date: '2025-09-14'
+                }
+            ];
+
+            const html = pinnedAnnouncements.map(announcement => `
+                <div class="pinned-announcement">
+                    <div class="pinned-content">
+                        <h4 class="pinned-title">${announcement.title}</h4>
+                        <p class="pinned-excerpt">${announcement.excerpt}</p>
+                        <div class="pinned-date">${formatDate(announcement.date)}</div>
+                    </div>
+                    <div class="pinned-icon">
+                        <i class="fas fa-thumbtack"></i>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function setupFilterTabs() {
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Filter announcements
+                    const filter = this.getAttribute('data-filter');
+                    filterAnnouncements(filter);
+                });
+            });
+        }
+
+        function filterAnnouncements(category) {
+            const announcements = document.querySelectorAll('.announcement-card');
+            announcements.forEach(announcement => {
+                if (category === 'all' || announcement.getAttribute('data-category') === category) {
+                    announcement.style.display = 'block';
+                } else {
+                    announcement.style.display = 'none';
+                }
+            });
+        }
+
+        function setupAnnouncementForm() {
+            document.getElementById('announcementForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('announcementTitle').value;
+                const category = document.getElementById('announcementCategory').value;
+                const content = document.getElementById('announcementContent').value;
+                const pinned = document.getElementById('announcementPinned').checked;
+                
+                // Here you would normally send the data to your backend
+                alert('Announcement posted successfully!');
+                closeAnnouncementModal();
+                
+                // Reset form
+                this.reset();
+                
+                // Reload announcements
+                setTimeout(() => {
+                    loadAnnouncements();
+                    if (pinned) loadPinnedAnnouncements();
+                }, 500);
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function toggleLike(announcementId) {
+            // Implementation for liking announcements
+            alert('Feature coming soon!');
+        }
+
+        function showComments(announcementId) {
+            // Implementation for showing comments
+            alert('Comments feature coming soon!');
+        }
+
+        function shareAnnouncement(announcementId) {
+            // Implementation for sharing announcements
+            alert('Share feature coming soon!');
+        }
+
+        function openAnnouncementModal() {
+            document.getElementById('announcementModal').style.display = 'flex';
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('announcementModal');
+            if (e.target === modal) {
+                closeAnnouncementModal();
+            }
+        });
+    </script>
+</body>
+</html>
