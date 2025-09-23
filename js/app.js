@@ -2,6 +2,7 @@ class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
     this.userData = null;
+    this.isInitialized = false;
     this.appData = {
       tasks: null,
       kudos: null,
@@ -10,25 +11,38 @@ class DataChampsApp {
       stats: null
     };
 
-    // Wait for authentication to complete
-    document.addEventListener('user-authenticated', () => {
-      console.log('✅ User authenticated event received, initializing app...');
-      this.init();
-    });
+    console.log('📱 DataChampsApp created for page:', this.currentPage);
 
-    // Check if already authenticated (in case event already fired)
-    setTimeout(() => {
-      if (window.auth && window.auth.isAuthenticated()) {
-        console.log('✅ User already authenticated, initializing app...');
+    // Wait for authentication
+    document.addEventListener('user-authenticated', () => {
+      console.log('✅ User authenticated event received');
+      if (!this.isInitialized) {
         this.init();
       }
-    }, 1500); // Increased delay to ensure auth completes
+    });
+
+    // Fallback: Check if already authenticated after a delay
+    setTimeout(() => {
+      if (window.auth && window.auth.isAuthenticated() && !this.isInitialized) {
+        console.log('✅ User already authenticated (fallback check)');
+        this.init();
+      } else if (!window.auth) {
+        console.error('❌ Auth manager not found');
+      } else if (!window.auth.isAuthenticated()) {
+        console.log('⏳ User not yet authenticated, waiting...');
+      }
+    }, 2000);
   }
 
-  // ... rest of the code stays the same
-
   async init() {
-    console.log('Initializing DataChamps App for page:', this.currentPage);
+    if (this.isInitialized) {
+      console.log('⚠️ App already initialized, skipping...');
+      return;
+    }
+
+    this.isInitialized = true;
+    console.log('🚀 Initializing DataChamps App for page:', this.currentPage);
+
     this.setupEventListeners();
     await this.loadUserData();
   }
@@ -212,9 +226,9 @@ class DataChampsApp {
   }
 }
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, creating app instance...');
+  console.log('📄 DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
+
 
