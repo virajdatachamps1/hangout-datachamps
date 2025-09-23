@@ -333,7 +333,7 @@ function debugLog(...args) {
 }
 
 // API Configuration
-const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbx76PT1KpDdP9nQAbaMHgmqe5JE5ibmiPOSVaqzZK2XiJwwkE_sucxEQ_4ShEyA_nA/exec';
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwh-dRlLIPAIs58APp08QSiH8Tj1jlnuGEcOSDoQtZL490bjEkzMlzf71WyAZGqFj34_w/exec';
 const API_SECRET = 'datachamps_hangout_2025';
 
 class APIManager {
@@ -630,3 +630,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
+
