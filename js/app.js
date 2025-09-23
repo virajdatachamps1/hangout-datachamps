@@ -1,3 +1,149 @@
+// ============================================
+// SEARCHABLE DROPDOWN CLASS - Add at top of app.js
+// ============================================
+
+class SearchableDropdown {
+  constructor(inputId, options, onSelect) {
+    this.inputId = inputId;
+    this.options = options;
+    this.onSelect = onSelect;
+    this.filteredOptions = options;
+    this.selectedIndex = -1;
+    this.init();
+  }
+
+  init() {
+    const input = document.getElementById(this.inputId);
+    if (!input) return;
+
+    const container = document.createElement('div');
+    container.className = 'searchable-dropdown-container';
+    container.id = `${this.inputId}-dropdown`;
+    
+    input.parentElement.style.position = 'relative';
+    input.parentElement.appendChild(container);
+
+    input.addEventListener('input', (e) => this.handleInput(e));
+    input.addEventListener('focus', (e) => this.handleFocus(e));
+    input.addEventListener('keydown', (e) => this.handleKeydown(e));
+    
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !container.contains(e.target)) {
+        this.hideDropdown();
+      }
+    });
+  }
+
+  handleInput(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    this.filteredOptions = this.options.filter(option => {
+      const name = option.name.toLowerCase();
+      const email = option.email.toLowerCase();
+      return name.includes(searchTerm) || email.includes(searchTerm);
+    });
+
+    this.selectedIndex = -1;
+    this.showDropdown();
+  }
+
+  handleFocus(e) {
+    this.filteredOptions = this.options;
+    this.showDropdown();
+  }
+
+  handleKeydown(e) {
+    const container = document.getElementById(`${this.inputId}-dropdown`);
+    if (!container || container.style.display === 'none') return;
+
+    switch(e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        this.selectedIndex = Math.min(this.selectedIndex + 1, this.filteredOptions.length - 1);
+        this.updateSelection();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+        this.updateSelection();
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (this.selectedIndex >= 0) {
+          this.selectOption(this.filteredOptions[this.selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        this.hideDropdown();
+        break;
+    }
+  }
+
+  showDropdown() {
+    const container = document.getElementById(`${this.inputId}-dropdown`);
+    if (!container) return;
+
+    if (this.filteredOptions.length === 0) {
+      container.innerHTML = '<div class="dropdown-item no-results">No results found</div>';
+    } else {
+      container.innerHTML = this.filteredOptions.map((option, index) => `
+        <div class="dropdown-item ${index === this.selectedIndex ? 'selected' : ''}" 
+             data-index="${index}"
+             onclick="window.searchableDropdowns['${this.inputId}'].selectOption({name: '${option.name.replace(/'/g, "\\'")}', email: '${option.email}'})">
+          <div class="dropdown-item-name">${option.name}</div>
+          <div class="dropdown-item-email">${option.email}</div>
+        </div>
+      `).join('');
+    }
+
+    container.style.display = 'block';
+  }
+
+  hideDropdown() {
+    const container = document.getElementById(`${this.inputId}-dropdown`);
+    if (container) {
+      container.style.display = 'none';
+    }
+  }
+
+  updateSelection() {
+    const container = document.getElementById(`${this.inputId}-dropdown`);
+    if (!container) return;
+
+    const items = container.querySelectorAll('.dropdown-item');
+    items.forEach((item, index) => {
+      if (index === this.selectedIndex) {
+        item.classList.add('selected');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('selected');
+      }
+    });
+  }
+
+  selectOption(option) {
+    const input = document.getElementById(this.inputId);
+    if (input) {
+      input.value = `${option.name} (${option.email})`;
+      input.dataset.selectedEmail = option.email;
+    }
+    
+    this.hideDropdown();
+    
+    if (this.onSelect) {
+      this.onSelect(option);
+    }
+  }
+}
+
+// Global storage for dropdowns
+window.searchableDropdowns = {};
+
+// ============================================
+// YOUR EXISTING DataChampsApp class starts here
+// ============================================
+
+
 class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
@@ -667,16 +813,23 @@ class DataChampsApp {
   }
 
   populateKudosDropdown() {
-    const dropdown = document.getElementById('kudosTo');
-    if (dropdown && this.appData.teamMembers) {
-      const currentUser = window.auth.getUserEmail();
-      const options = this.appData.teamMembers
-        .filter(member => member.email !== currentUser)
-        .map(member => `<option value="${member.email}">${member.name} (${member.email})</option>`)
-        .join('');
-      dropdown.innerHTML = '<option value="">Select a team member</option>' + options;
+  const input = document.getElementById('kudosToSearch');
+  if (!input || !this.appData.teamMembers) return;
+
+  const currentUser = window.auth.getUserEmail();
+  const availableMembers = this.appData.teamMembers.filter(
+    member => member.email !== currentUser
+  );
+
+  window.searchableDropdowns['kudosToSearch'] = new SearchableDropdown(
+    'kudosToSearch',
+    availableMembers,
+    (option) => {
+      console.log('Selected kudos recipient:', option);
     }
-  }
+  );
+}
+
 
   // TRAINING PAGE
   async loadTrainingData() {
@@ -731,77 +884,91 @@ class DataChampsApp {
   }
 
   populateTaskAssignmentDropdown() {
-    const dropdown = document.getElementById('taskAssignTo');
-    if (dropdown && this.appData.teamMembers) {
-      const currentUser = window.auth.getUserEmail();
-      const options = this.appData.teamMembers
-        .map(member => {
-          const label = member.email === currentUser ? 'Myself' : `${member.name} (${member.email})`;
-          return `<option value="${member.email}">${label}</option>`;
-        })
-        .join('');
-      dropdown.innerHTML = '<option value="">Select assignee</option>' + options;
+  const input = document.getElementById('taskAssignToSearch');
+  if (!input || !this.appData.teamMembers) return;
+
+  window.searchableDropdowns['taskAssignToSearch'] = new SearchableDropdown(
+    'taskAssignToSearch',
+    this.appData.teamMembers,
+    (option) => {
+      console.log('Selected assignee:', option);
     }
-  }
+  );
+}
 
   async handleTaskSubmit(e) {
-    const formData = new FormData(e.target);
-    const currentUser = window.auth.getUserEmail();
-    
-    const taskData = {
-      title: formData.get('title'),
-      description: formData.get('description'),
-      dueDate: formData.get('dueDate'),
-      assignedTo: formData.get('assignedTo') || currentUser,
-      assignedBy: currentUser,
-      status: 'To Do',
-      createdAt: new Date().toISOString()
-    };
+  const formData = new FormData(e.target);
+  const currentUser = window.auth.getUserEmail();
+  
+  const assignToInput = document.getElementById('taskAssignToSearch');
+  const assignedTo = assignToInput?.dataset?.selectedEmail || currentUser;
+  
+  const taskData = {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    dueDate: formData.get('dueDate'),
+    assignedTo: assignedTo,
+    assignedBy: currentUser,
+    status: 'To Do',
+    createdAt: new Date().toISOString()
+  };
 
-    try {
-      await window.api.createTask(taskData);
-      window.api.showSuccessNotification('Task created successfully!');
-      
-      // Close modal
-      document.getElementById('taskModal').style.display = 'none';
-      e.target.reset();
-      
-      // Reload tasks
-      await this.loadTasksData();
-      
-    } catch (error) {
-      console.error('Failed to create task:', error);
-      window.api.showErrorNotification('Failed to create task');
+  try {
+    await window.api.createTask(taskData);
+    window.api.showSuccessNotification('Task created successfully!');
+    
+    document.getElementById('taskModal').style.display = 'none';
+    e.target.reset();
+    if (assignToInput) {
+      assignToInput.value = '';
+      delete assignToInput.dataset.selectedEmail;
     }
+    
+    await this.loadTasksData();
+    
+  } catch (error) {
+    console.error('Failed to create task:', error);
+    window.api.showErrorNotification('Failed to create task');
   }
+}
 
   async handleKudosSubmit(e) {
-    const formData = new FormData(e.target);
-    const currentUser = window.auth.getUserEmail();
-    
-    const kudosData = {
-      fromUser: currentUser,
-      toUser: formData.get('toUser'),
-      message: formData.get('message'),
-      category: formData.get('category'),
-      createdAt: new Date().toISOString()
-    };
-
-    try {
-      await window.api.sendKudos(kudosData);
-      window.api.showSuccessNotification('Kudos sent successfully!');
-      
-      // Reset form
-      e.target.reset();
-      
-      // Reload kudos
-      await this.loadKudosData();
-      
-    } catch (error) {
-      console.error('Failed to send kudos:', error);
-      window.api.showErrorNotification('Failed to send kudos');
-    }
+  const formData = new FormData(e.target);
+  const currentUser = window.auth.getUserEmail();
+  
+  const kudosToInput = document.getElementById('kudosToSearch');
+  const toUser = kudosToInput?.dataset?.selectedEmail;
+  
+  if (!toUser) {
+    window.api.showErrorNotification('Please select a recipient');
+    return;
   }
+  
+  const kudosData = {
+    fromUser: currentUser,
+    toUser: toUser,
+    message: formData.get('message'),
+    category: formData.get('category'),
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    await window.api.sendKudos(kudosData);
+    window.api.showSuccessNotification('Kudos sent successfully!');
+    
+    e.target.reset();
+    if (kudosToInput) {
+      kudosToInput.value = '';
+      delete kudosToInput.dataset.selectedEmail;
+    }
+    
+    await this.loadKudosData();
+    
+  } catch (error) {
+    console.error('Failed to send kudos:', error);
+    window.api.showErrorNotification('Failed to send kudos');
+  }
+}
 
   showNotifications() {
     const notifications = this.appData.notifications || [];
@@ -857,3 +1024,4 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('📄 DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
+
