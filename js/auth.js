@@ -137,3 +137,4 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Initializing Auth Manager...');
   window.auth = new AuthManager();
 });
+
