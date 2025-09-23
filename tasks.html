@@ -128,12 +128,15 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="taskAssignTo">Assign To</label>
-                            <select id="taskAssignTo" name="assignedTo">
-                                <option value="">Myself</option>
-                                <!-- Team members will be populated here -->
-                            </select>
-                        </div>
+              <label for="taskAssignToSearch">Assign To</label>
+               <input 
+                 type="text" 
+                 id="taskAssignToSearch" 
+                 placeholder="Type name or email to search..."
+                 autocomplete="off"
+             />
+             <small class="form-hint">Start typing to search team members</small>
+             </div>
                     </div>
                     
                     <div class="form-actions">
@@ -230,6 +233,7 @@
 </html>
 </body>
 </html>
+
 
 
 
