@@ -35,11 +35,15 @@
                             <div class="widget-content">
                                 <form id="kudosForm">
                                     <div class="form-group">
-                                        <label for="kudosTo">Send To *</label>
-                                        <select id="kudosTo" name="toUser" required>
-                                            <option value="">Select a team member</option>
-                                            <!-- Team members will be populated here -->
-                                        </select>
+                                     <label for="kudosToSearch">Send To *</label>
+                                     <input 
+                                       type="text" 
+                                       id="kudosToSearch" 
+                                       placeholder="Type name or email to search..."
+                                       autocomplete="off"
+                                       required
+                                         />
+                                    <small class="form-hint">Start typing to search team members</small>
                                     </div>
                                     
                                     <div class="form-group">
@@ -233,6 +237,7 @@
     </script>
 </body>
 </html>
+
 
 
 
