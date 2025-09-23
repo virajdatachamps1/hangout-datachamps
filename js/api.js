@@ -303,5 +303,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+// Add to APIManager class in api.js
+
+async getAnnouncements() {
+  return await this.makeRequest('getAnnouncements', {}, 'GET');
+}
+
+async createAnnouncement(announcementData) {
+  return await this.makeRequest('createAnnouncement', announcementData);
+}
+
+async getPhotos() {
+  return await this.makeRequest('getPhotos', {}, 'GET');
+}
+
+async uploadPhotos(photos) {
+  return await this.makeRequest('uploadPhotos', { photos });
+}
+
+
+
 
 
