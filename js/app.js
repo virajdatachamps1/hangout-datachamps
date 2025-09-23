@@ -3,6 +3,7 @@ class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
     this.userData = null;
+    this.currentUser = null; // Added for user info
     this.appData = {
       tasks: null,
       kudos: null,
@@ -12,8 +13,9 @@ class DataChampsApp {
     };
 
     // Wait for user authentication
-    document.addEventListener('user-authenticated', () => {
+    document.addEventListener('user-authenticated', (event) => {
       console.log('User authenticated, initializing app...');
+      this.currentUser = event.detail.user; // Store user info
       this.init();
     });
 
@@ -21,6 +23,7 @@ class DataChampsApp {
     setTimeout(() => {
       if (window.auth && window.auth.isAuthenticated()) {
         console.log('User already authenticated, initializing app...');
+        this.currentUser = window.auth.getCurrentUser(); // Get current user
         this.init();
       }
     }, 1000);
@@ -262,55 +265,202 @@ class DataChampsApp {
     }
   }
 
-  // TASKS PAGE
+  // TASKS PAGE - COMPLETELY UPDATED
   async loadTasksData() {
     try {
       console.log('Loading tasks data...');
-      const tasks = await window.api.getTasks();
+      
+      if (!this.currentUser || !this.currentUser.email) {
+        console.error('No current user found');
+        this.displayEmptyTasks();
+        return;
+      }
+
+      const tasks = await window.api.getTasks(this.currentUser.email);
       console.log('Tasks loaded:', tasks);
+      
+      // Store tasks in appData
+      this.appData.tasks = tasks;
       
       // Display tasks in columns
       this.displayTasks(tasks);
+      
+      // Update task statistics
+      this.updateTaskStats(tasks);
+      
     } catch (error) {
       console.error('Failed to load tasks:', error);
+      this.displayEmptyTasks();
     }
   }
 
   displayTasks(tasks) {
-    const todoList = document.getElementById('todoTasks');
-    const inProgressList = document.getElementById('inProgressTasks');
-    const completedList = document.getElementById('completedTasks');
+    console.log('Displaying tasks:', tasks);
 
-    if (!tasks || tasks.length === 0) {
-      if (todoList) todoList.innerHTML = '<div class="no-tasks">No tasks yet</div>';
-      if (inProgressList) inProgressList.innerHTML = '<div class="no-tasks">No tasks in progress</div>';
-      if (completedList) completedList.innerHTML = '<div class="no-tasks">No completed tasks</div>';
+    // Update todo tasks
+    this.displayTasksInColumn(tasks.todo || [], 'todoTasks');
+    this.updateTaskCount('todoCount', tasks.todo ? tasks.todo.length : 0);
+    
+    // Update in progress tasks  
+    this.displayTasksInColumn(tasks.inProgress || [], 'inProgressTasks');
+    this.updateTaskCount('inProgressCount', tasks.inProgress ? tasks.inProgress.length : 0);
+    
+    // Update completed tasks
+    this.displayTasksInColumn(tasks.completed || [], 'completedTasks');
+    this.updateTaskCount('completedCount', tasks.completed ? tasks.completed.length : 0);
+  }
+
+  displayTasksInColumn(taskList, columnId) {
+    const column = document.getElementById(columnId);
+    if (!column) {
+      console.error('Column not found:', columnId);
       return;
     }
-
-    const todo = tasks.filter(t => t.status === 'To Do');
-    const inProgress = tasks.filter(t => t.status === 'In Progress');
-    const completed = tasks.filter(t => t.status === 'Completed');
-
-    if (todoList) {
-      todoList.innerHTML = todo.length > 0 ? todo.map(t => this.createTaskCard(t)).join('') : '<div class="no-tasks">No tasks</div>';
+    
+    if (!taskList || taskList.length === 0) {
+      column.innerHTML = '<div class="empty-state">No tasks yet</div>';
+      return;
     }
-    if (inProgressList) {
-      inProgressList.innerHTML = inProgress.length > 0 ? inProgress.map(t => this.createTaskCard(t)).join('') : '<div class="no-tasks">No tasks</div>';
-    }
-    if (completedList) {
-      completedList.innerHTML = completed.length > 0 ? completed.map(t => this.createTaskCard(t)).join('') : '<div class="no-tasks">No tasks</div>';
-    }
+    
+    column.innerHTML = taskList.map(task => this.createTaskCard(task)).join('');
   }
 
   createTaskCard(task) {
+    const dueDate = new Date(task.dueDate);
+    const isOverdue = dueDate < new Date() && task.status !== 'Completed';
+    
     return `
-      <div class="task-card">
-        <div class="task-card-title">${task.title}</div>
-        <div class="task-card-description">${task.description || ''}</div>
-        <div class="task-card-meta">Due: ${new Date(task.dueDate).toLocaleDateString()}</div>
+      <div class="task-card ${isOverdue ? 'overdue' : ''}" data-task-id="${task.id}">
+        <div class="task-header">
+          <h4 class="task-title">${task.title}</h4>
+          <div class="task-actions">
+            <button class="btn-icon" onclick="window.app.editTask('${task.id}')">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon" onclick="window.app.deleteTask('${task.id}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
+        <div class="task-meta">
+          <span class="task-assignee">
+            <i class="fas fa-user"></i> ${task.assignedBy || 'Self'}
+          </span>
+          <span class="task-due-date ${isOverdue ? 'overdue' : ''}">
+            <i class="fas fa-calendar"></i> ${dueDate.toLocaleDateString()}
+          </span>
+        </div>
+        <div class="task-status-actions">
+          ${this.getStatusButtons(task)}
+        </div>
       </div>
     `;
+  }
+
+  getStatusButtons(task) {
+    const status = task.status;
+    let buttons = '';
+    
+    if (status === 'To Do') {
+      buttons = `<button class="btn btn-sm" onclick="window.app.moveTask('${task.id}', 'In Progress')">Start</button>`;
+    } else if (status === 'In Progress') {
+      buttons = `
+        <button class="btn btn-sm btn-outline" onclick="window.app.moveTask('${task.id}', 'To Do')">Move to Todo</button>
+        <button class="btn btn-sm btn-success" onclick="window.app.moveTask('${task.id}', 'Completed')">Complete</button>
+      `;
+    } else if (status === 'Completed') {
+      buttons = `<button class="btn btn-sm btn-outline" onclick="window.app.moveTask('${task.id}', 'In Progress')">Reopen</button>`;
+    }
+    
+    return buttons;
+  }
+
+  async moveTask(taskId, newStatus) {
+    try {
+      console.log('Moving task:', taskId, 'to', newStatus);
+      await window.api.moveTask(taskId, newStatus);
+      
+      // Reload tasks to reflect changes
+      await this.loadTasksData();
+    } catch (error) {
+      console.error('Failed to move task:', error);
+      alert('Failed to update task. Please try again.');
+    }
+  }
+
+  async deleteTask(taskId) {
+    if (!confirm('Are you sure you want to delete this task?')) {
+      return;
+    }
+    
+    try {
+      console.log('Deleting task:', taskId);
+      await window.api.deleteTask(taskId);
+      
+      // Reload tasks to reflect changes
+      await this.loadTasksData();
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      alert('Failed to delete task. Please try again.');
+    }
+  }
+
+  editTask(taskId) {
+    console.log('Edit task not implemented yet:', taskId);
+    // TODO: Implement edit functionality
+  }
+
+  updateTaskCount(elementId, count) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.textContent = count;
+    }
+  }
+
+  updateTaskStats(tasks) {
+    if (!tasks) return;
+    
+    const totalTasks = (tasks.todo?.length || 0) + (tasks.inProgress?.length || 0) + (tasks.completed?.length || 0);
+    const activeTasks = (tasks.todo?.length || 0) + (tasks.inProgress?.length || 0);
+    
+    // Count overdue tasks
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const overdueTasks = [...(tasks.todo || []), ...(tasks.inProgress || [])].filter(task => {
+      const dueDate = new Date(task.dueDate);
+      return !isNaN(dueDate.getTime()) && dueDate < today;
+    }).length;
+    
+    // Update UI elements
+    this.updateStatElement('totalTasksCount', totalTasks);
+    this.updateStatElement('activeTasksCount', activeTasks);
+    this.updateStatElement('completedTasksCount', tasks.completed?.length || 0);
+    this.updateStatElement('overdueTasksCount', overdueTasks);
+  }
+
+  updateStatElement(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.textContent = value;
+    }
+  }
+
+  displayEmptyTasks() {
+    console.log('Displaying empty tasks state');
+    
+    ['todoTasks', 'inProgressTasks', 'completedTasks'].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.innerHTML = '<div class="empty-state">No tasks yet</div>';
+      }
+    });
+    
+    // Reset counts
+    ['todoCount', 'inProgressCount', 'completedCount', 'totalTasksCount', 'activeTasksCount', 'completedTasksCount', 'overdueTasksCount'].forEach(id => {
+      this.updateStatElement(id, 0);
+    });
   }
 
   showTaskModal() {
@@ -391,8 +541,29 @@ class DataChampsApp {
 
   async handleTaskSubmit(e) {
     e.preventDefault();
-    // Task creation logic here
-    console.log('Task submitted');
+    
+    try {
+      const formData = new FormData(e.target);
+      const taskData = {
+        title: formData.get('title'),
+        description: formData.get('description'),
+        dueDate: formData.get('dueDate'),
+        assignedTo: this.currentUser?.email || '',
+        assignedBy: this.currentUser?.email || '',
+        status: 'To Do'
+      };
+      
+      console.log('Creating task:', taskData);
+      await window.api.createTask(taskData);
+      
+      // Hide modal and reload tasks
+      this.hideTaskModal();
+      await this.loadTasksData();
+      
+    } catch (error) {
+      console.error('Failed to create task:', error);
+      alert('Failed to create task. Please try again.');
+    }
   }
 
   // KUDOS PAGE
@@ -474,4 +645,3 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
-
