@@ -289,7 +289,25 @@ class APIManager {
       this.showErrorNotification('Failed to connect to API. Please check your configuration.');
       return false;
     }
-  }
+  },
+  // Add to APIManager class in api.js
+
+async getAnnouncements() {
+  return await this.makeRequest('getAnnouncements', {}, 'GET');
+ },
+
+async createAnnouncement(announcementData) {
+  return await this.makeRequest('createAnnouncement', announcementData);
+ },
+
+async getPhotos() {
+  return await this.makeRequest('getPhotos', {}, 'GET');
+ },
+
+async uploadPhotos(photos) {
+  return await this.makeRequest('uploadPhotos', { photos });
+ }
+
 }
 
 // Initialize API manager
@@ -300,6 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
+
+
+
 
 
 
