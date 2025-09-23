@@ -1,9 +1,7 @@
-// Main Application Class
 class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
     this.userData = null;
-    this.currentUser = { email: 'viraj.s@datachamps.ai', name: 'Viraj Sangale' }; // Temporary fix
     this.appData = {
       tasks: null,
       kudos: null,
@@ -12,20 +10,22 @@ class DataChampsApp {
       stats: null
     };
 
-    // Wait for user authentication
+    // Wait for authentication to complete
     document.addEventListener('user-authenticated', () => {
-      console.log('User authenticated, initializing app...');
+      console.log('✅ User authenticated event received, initializing app...');
       this.init();
     });
 
-    // If user is already authenticated, init immediately
+    // Check if already authenticated (in case event already fired)
     setTimeout(() => {
       if (window.auth && window.auth.isAuthenticated()) {
-        console.log('User already authenticated, initializing app...');
+        console.log('✅ User already authenticated, initializing app...');
         this.init();
       }
-    }, 1000);
+    }, 1500); // Increased delay to ensure auth completes
   }
+
+  // ... rest of the code stays the same
 
   async init() {
     console.log('Initializing DataChamps App for page:', this.currentPage);
@@ -217,3 +217,4 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
+
