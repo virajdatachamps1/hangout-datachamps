@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Photos | DataChamps Hangout</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Updated Sidebar Navigation - Replace in ALL pages -->
+<nav class="sidebar">
+    <div class="sidebar-header">
+        <a href="index.html" class="logo">
+            <div class="logo-icon">
+                <img src="assets/images/logo.png" alt="DataChamps" onerror="this.innerHTML='<i class=\'fas fa-chart-line\'></i>'">
+            </div>
+            <span class="logo-text">DataChamps</span>
+        </a>
+    </div>
+
+    <div class="user-profile">
+        <div class="user-info">
+            <div class="user-avatar">DC</div>
+            <div class="user-details">
+                <h4>DataChamps Team</h4>
+                <p>Welcome!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <!-- Workspace Section -->
+        <div class="nav-group">
+            <div class="nav-title">Workspace</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home icon"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html" class="nav-link">
+                        <i class="fas fa-tasks icon"></i>
+                        My Tasks
+                        <span class="nav-badge">5</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="celebrations.html" class="nav-link">
+                        <i class="fas fa-birthday-cake icon"></i>
+                        Celebrations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timesheets.html" class="nav-link">
+                        <i class="fas fa-clock icon"></i>
+                        Timesheets
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Learning & Development Section -->
+        <div class="nav-group">
+            <div class="nav-title">Learning & Development</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="training.html" class="nav-link">
+                        <i class="fas fa-graduation-cap icon"></i>
+                        Training & Courses
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assessments.html" class="nav-link">
+                        <i class="fas fa-clipboard-check icon"></i>
+                        Assessments
+                        <span class="nav-badge">2</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="certifications.html" class="nav-link">
+                        <i class="fas fa-certificate icon"></i>
+                        Certifications
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Operations Section -->
+        <div class="nav-group">
+            <div class="nav-title">Operations</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="sop.html" class="nav-link">
+                        <i class="fas fa-book icon"></i>
+                        SOPs & Policies
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="onboarding.html" class="nav-link">
+                        <i class="fas fa-user-plus icon"></i>
+                        Onboarding
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="forms.html" class="nav-link">
+                        <i class="fas fa-comment-alt icon"></i>
+                        Feedback
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Company Profile Section -->
+        <div class="nav-group">
+            <div class="nav-title">Company Profile</div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="announcements.html" class="nav-link">
+                        <i class="fas fa-bullhorn icon"></i>
+                        Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <i class="fas fa-building icon"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="photos.html" class="nav-link">
+                        <i class="fas fa-images icon"></i>
+                        Company Photos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="sample-dashboards.html" class="nav-link">
+                        <i class="fas fa-chart-pie icon"></i>
+                        Sample Dashboards
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="products.html" class="nav-link">
+                        <i class="fas fa-box icon"></i>
+                        Latest Products
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html" class="nav-link">
+                        <i class="fas fa-cog icon"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!--   Paste the SAME sidebar HTML you already use   -->
+
+    <main class="main-content">
+      <!-- â–ºâ–º Top-bar (reuse same markup) â—„â—„ -->
+
+      <!-- â–‘â–‘ Page-specific content â–‘â–‘ -->
+      <section class="content-area">
+        <h1 class="page-title">Company Photo Gallery</h1>
+
+        <div class="photo-gallery" id="photoGallery">
+          <!-- Static sample images -->
+          <div class="photo-item">
+            <img src="img1.jpg" alt="Team event">
+            <div class="photo-caption">Team-building day</div>
+          </div>
+          <div class="photo-item">
+            <img src="img2.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img3.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img4.jpg" alt="Office fun">
+            <div class="photo-caption">Office Diwali dÃ©cor</div>
+          </div>
+          <div class="photo-item">
+            <img src="img5.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img6.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img7.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img8.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img9.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img10.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img11.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img12.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img13.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img14.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <div class="photo-item">
+            <img src="img15.jpg" alt="Workshop">
+            <div class="photo-caption">AI workshop</div>
+          </div>
+          <!-- Add more images in /assets/photos and replicate the block -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    /* If later you want to load from Drive/Sheets, hook into initializePhotoGallery() in app.js */
+  </script>
+</body>
+</html>
