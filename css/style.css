@@ -1599,4 +1599,102 @@ body {
 }
 
 
+/* ============================================
+   SEARCHABLE DROPDOWN - Add to bottom of style.css
+   ============================================ */
+
+.searchable-dropdown-container {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover,
+.dropdown-item.selected {
+  background: #f3f4f6;
+}
+
+.dropdown-item.selected {
+  background: #eff6ff;
+  border-left: 3px solid #667eea;
+}
+
+.dropdown-item.no-results {
+  color: #9ca3af;
+  text-align: center;
+  font-style: italic;
+  cursor: default;
+}
+
+.dropdown-item-name {
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.dropdown-item-email {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+input[id*="Search"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25rem;
+  padding-right: 2.5rem;
+}
+
+.searchable-dropdown-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.searchable-dropdown-container::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 0 8px 8px 0;
+}
+
+.searchable-dropdown-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .searchable-dropdown-container {
+    max-height: 200px;
+  }
+  
+  .dropdown-item {
+    padding: 0.6rem 0.75rem;
+  }
+}
 
