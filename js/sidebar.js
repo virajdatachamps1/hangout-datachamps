@@ -101,6 +101,22 @@ class SidebarComponent {
               <span>Company Profile</span>
             </a>
           </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Tools</div>
+            <a href="sample-dashboard.html" class="nav-link ${this.currentPage === 'sample-dashboard' ? 'active' : ''}">
+              <i class="fas fa-chart-line"></i>
+              <span>Sample Dashboard</span>
+            </a>
+            <a href="forms.html" class="nav-link ${this.currentPage === 'forms' ? 'active' : ''}">
+              <i class="fas fa-wpforms"></i>
+              <span>Forms</span>
+            </a>
+            <a href="settings.html" class="nav-link ${this.currentPage === 'settings' ? 'active' : ''}">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </a>
+          </div>
         </nav>
 
         <div class="sidebar-footer">
