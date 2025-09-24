@@ -104,7 +104,7 @@ class SidebarComponent {
 
           <div class="nav-section">
             <div class="nav-section-title">Tools</div>
-            <a href="sample-dashboard.html" class="nav-link ${this.currentPage === 'sample-dashboard' ? 'active' : ''}">
+            <a href="sample-dashboards.html" class="nav-link ${this.currentPage === 'sample-dashboard' ? 'active' : ''}">
               <i class="fas fa-chart-line"></i>
               <span>Sample Dashboard</span>
             </a>
