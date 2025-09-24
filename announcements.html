@@ -3,63 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Announcements - DataChamps Hangout</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <title>DataChamps Hangout - Announcements</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Container -->
+        <!-- Sidebar Navigation -->
         <div id="sidebar-container"></div>
-
+        
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Bar -->
             <header class="page-header">
                 <div class="page-title">
-                    <h1>Company Announcements</h1>
-                    <p>Stay updated with the latest company news and updates</p>
+                    <h1>📢 Announcements</h1>
+                    <p>Stay updated with company news and important updates</p>
                 </div>
-                <div class="header-actions">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search announcements...">
-                    </div>
-                    <!-- Only visible to authorized users -->
-                    <button class="btn btn-primary" id="newAnnouncementBtn" style="display: none;">
+                <div class="header-actions" id="adminActions" style="display: none;">
+                    <button class="btn btn-primary" id="addAnnouncementBtn">
                         <i class="fas fa-plus"></i>
                         <span>New Announcement</span>
                     </button>
                 </div>
             </header>
 
-            <!-- Content Area -->
             <div class="page-content">
                 <!-- Filter Tabs -->
                 <div class="filter-tabs">
-                    <button class="filter-tab active" data-filter="all">All Announcements</button>
+                    <button class="filter-tab active" data-filter="all">All</button>
                     <button class="filter-tab" data-filter="urgent">Urgent</button>
                     <button class="filter-tab" data-filter="general">General</button>
                     <button class="filter-tab" data-filter="events">Events</button>
-                    <button class="filter-tab" data-filter="policy">Policy Updates</button>
+                    <button class="filter-tab" data-filter="policy">Policy</button>
                 </div>
 
-                <!-- Pinned Announcements Widget -->
-                <div class="widget" id="pinnedWidget" style="display: none;">
-                    <div class="widget-header">
-                        <h3>
-                            <i class="fas fa-thumbtack"></i>
-                            Pinned Announcements
-                        </h3>
-                    </div>
-                    <div class="widget-content">
-                        <div id="pinnedAnnouncements"></div>
+                <!-- Pinned Announcements -->
+                <div class="pinned-section" id="pinnedAnnouncements">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-thumbtack"></i>
+                                Pinned Announcements
+                            </h3>
+                        </div>
+                        <div class="widget-content">
+                            <div id="pinnedAnnouncementsList">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading pinned announcements...
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Announcements List -->
+                <!-- All Announcements -->
                 <div class="announcements-container">
-                    <div id="announcementsList" class="announcements-list">
+                    <div class="announcements-list" id="announcementsList">
                         <div class="loading">
                             <div class="spinner"></div>
                             Loading announcements...
@@ -70,12 +70,12 @@
         </main>
     </div>
 
-    <!-- New Announcement Modal -->
+    <!-- Add/Edit Announcement Modal -->
     <div id="announcementModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Create New Announcement</h2>
-                <button class="modal-close" onclick="closeAnnouncementModal()">
+                <h2 id="modalTitle">New Announcement</h2>
+                <button class="modal-close" onclick="document.getElementById('announcementModal').style.display='none'">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -83,24 +83,30 @@
                 <form id="announcementForm">
                     <div class="form-group">
                         <label for="announcementTitle">Title *</label>
-                        <input type="text" id="announcementTitle" required placeholder="Enter announcement title">
+                        <input type="text" id="announcementTitle" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announcementContent">Content *</label>
+                        <textarea id="announcementContent" name="content" rows="6" required 
+                                placeholder="Write your announcement content here..."></textarea>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="announcementCategory">Category *</label>
-                            <select id="announcementCategory" required>
-                                <option value="">Select category</option>
-                                <option value="urgent">Urgent</option>
+                            <label for="announcementCategory">Category</label>
+                            <select id="announcementCategory" name="category">
                                 <option value="general">General</option>
+                                <option value="urgent">Urgent</option>
                                 <option value="events">Events</option>
-                                <option value="policy">Policy Updates</option>
+                                <option value="policy">Policy</option>
+                                <option value="hr">HR</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="announcementPriority">Priority</label>
-                            <select id="announcementPriority">
+                            <select id="announcementPriority" name="priority">
                                 <option value="normal">Normal</option>
                                 <option value="high">High</option>
                                 <option value="urgent">Urgent</option>
@@ -109,22 +115,19 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="announcementContent">Content *</label>
-                        <textarea id="announcementContent" rows="6" required placeholder="Write your announcement content..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
                         <label>
-                            <input type="checkbox" id="announcementPinned">
+                            <input type="checkbox" id="announcementPinned" name="pinned">
                             Pin this announcement to the top
                         </label>
                     </div>
                     
                     <div class="form-actions">
-                        <button type="button" class="btn btn-outline" onclick="closeAnnouncementModal()">Cancel</button>
+                        <button type="button" class="btn btn-outline" onclick="document.getElementById('announcementModal').style.display='none'">
+                            Cancel
+                        </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i>
-                            Post Announcement
+                            Publish Announcement
                         </button>
                     </div>
                 </form>
@@ -137,6 +140,5 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/announcements.js"></script>
 </body>
 </html>
