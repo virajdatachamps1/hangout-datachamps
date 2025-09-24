@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - Settings</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Settings</h1>
+                    <p>Manage your preferences and account settings</p>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Profile Information -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>
+                            <i class="fas fa-user"></i>
+                            Profile Information
+                        </h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="form-group">
+                            <label for="profileName">Name</label>
+                            <input type="text" id="profileName" name="name" placeholder="Loading...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" name="email" readonly style="background: #f3f4f6; color: #6b7280;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profileRole">Role</label>
+                            <input type="text" id="profileRole" name="role" readonly style="background: #f3f4f6; color: #6b7280;">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" id="saveProfileBtn">
+                                <i class="fas fa-save"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Preferences -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>
+                            <i class="fas fa-bell"></i>
+                            Notification Preferences
+                        </h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="notification-setting">
+                            <div class="setting-info">
+                                <div class="setting-title">Birthday Notifications</div>
+                                <div class="setting-description">Get notified about team member birthdays</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="birthdayNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="notification-setting">
+                            <div class="setting-info">
+                                <div class="setting-title">Task Notifications</div>
+                                <div class="setting-description">Get notified when tasks are assigned to you</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="taskNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="notification-setting">
+                            <div class="setting-info">
+                                <div class="setting-title">Kudos Notifications</div>
+                                <div class="setting-description">Get notified when you receive kudos</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="kudosNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" id="saveNotificationBtn">
+                                <i class="fas fa-save"></i>
+                                Save Preferences
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display Settings -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>
+                            <i class="fas fa-palette"></i>
+                            Display Settings
+                        </h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="form-group">
+                            <label for="themePreference">Theme</label>
+                            <select id="themePreference" name="theme">
+                                <option value="light">Light Theme</option>
+                                <option value="dark" disabled>Dark Theme (Coming Soon)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" id="saveDisplayBtn">
+                                <i class="fas fa-save"></i>
+                                Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Management -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>
+                            <i class="fas fa-download"></i>
+                            Data Management
+                        </h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="data-action">
+                            <div class="action-info">
+                                <div class="action-title">Export My Data</div>
+                                <div class="action-description">Download a copy of your tasks, kudos, and activity data</div>
+                            </div>
+                            <button type="button" class="btn btn-outline" id="exportDataBtn">
+                                <i class="fas fa-download"></i>
+                                Export Data
+                            </button>
+                        </div>
+                        
+                        <div class="data-action">
+                            <div class="action-info">
+                                <div class="action-title">Account</div>
+                                <div class="action-description">Sign out of your account</div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="logoutAccountBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to DataChamps Hangout</h2>
+                <p>Please sign in with your DataChamps account</p>
+            </div>
+            <div class="modal-body">
+                <div id="clerk-signin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keep these scripts in exact order -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Settings-specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for authentication
+            const initializeSettings = () => {
+                if (window.auth && window.auth.isAuthenticated()) {
+                    loadUserProfile();
+                    setupSettingsEventListeners();
+                } else {
+                    setTimeout(initializeSettings, 500);
+                }
+            };
+            
+            setTimeout(initializeSettings, 1000);
+        });
+
+        function loadUserProfile() {
+            // Load user info from auth
+            const userName = window.auth.getUserName();
+            const userEmail = window.auth.getUserEmail();
+            
+            document.getElementById('profileName').value = userName || '';
+            document.getElementById('profileEmail').value = userEmail || '';
+            document.getElementById('profileRole').value = 'Team Member';
+        }
+
+        function setupSettingsEventListeners() {
+            // Save Profile
+            document.getElementById('saveProfileBtn').addEventListener('click', function() {
+                const name = document.getElementById('profileName').value;
+                if (name.trim()) {
+                    localStorage.setItem('userName', name);
+                    if (window.api && window.api.showSuccessNotification) {
+                        window.api.showSuccessNotification('Profile updated successfully!');
+                    } else {
+                        alert('Profile updated successfully!');
+                    }
+                }
+            });
+
+            // Save Notifications
+            document.getElementById('saveNotificationBtn').addEventListener('click', function() {
+                const settings = {
+                    birthdays: document.getElementById('birthdayNotifications').checked,
+                    tasks: document.getElementById('taskNotifications').checked,
+                    kudos: document.getElementById('kudosNotifications').checked
+                };
+                
+                localStorage.setItem('notificationSettings', JSON.stringify(settings));
+                
+                if (window.api && window.api.showSuccessNotification) {
+                    window.api.showSuccessNotification('Notification preferences saved!');
+                } else {
+                    alert('Notification preferences saved!');
+                }
+            });
+
+            // Save Display Settings
+            document.getElementById('saveDisplayBtn').addEventListener('click', function() {
+                const theme = document.getElementById('themePreference').value;
+                localStorage.setItem('themePreference', theme);
+                
+                if (window.api && window.api.showSuccessNotification) {
+                    window.api.showSuccessNotification('Display settings saved!');
+                } else {
+                    alert('Display settings saved!');
+                }
+            });
+
+            // Export Data
+            document.getElementById('exportDataBtn').addEventListener('click', function() {
+                if (window.api && window.api.showSuccessNotification) {
+                    window.api.showSuccessNotification('Data export feature coming soon!');
+                } else {
+                    alert('Data export feature coming soon!');
+                }
+            });
+
+            // Logout
+            document.getElementById('logoutAccountBtn').addEventListener('click', function() {
+                if (window.auth && window.auth.logout) {
+                    window.auth.logout();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Load saved preferences
+            loadSavedPreferences();
+        }
+
+        function loadSavedPreferences() {
+            // Load notification settings
+            const notificationSettings = localStorage.getItem('notificationSettings');
+            if (notificationSettings) {
+                const settings = JSON.parse(notificationSettings);
+                document.getElementById('birthdayNotifications').checked = settings.birthdays !== false;
+                document.getElementById('taskNotifications').checked = settings.tasks !== false;
+                document.getElementById('kudosNotifications').checked = settings.kudos !== false;
+            }
+
+            // Load theme preference
+            const theme = localStorage.getItem('themePreference');
+            if (theme) {
+                document.getElementById('themePreference').value = theme;
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Settings -->
+    <style>
+        .notification-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .notification-setting:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-description {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d1d5db;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .data-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .data-action:last-child {
+            border-bottom: none;
+        }
+
+        .action-info {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .action-title {
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-description {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+    </style>
+</body>
+</html>
