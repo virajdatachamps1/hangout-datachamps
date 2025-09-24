@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - Training & Courses</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>📚 Training & Courses</h1>
+                    <p>Access your learning materials and training schedule</p>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- Training Calendar Section -->
+                <div class="training-section">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-calendar-alt"></i>
+                                Training Calendar
+                            </h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="training-calendar-info">
+                                <p>View upcoming training sessions, workshops, and team meetings.</p>
+                                <div class="calendar-links">
+                                    <a href="#" id="trainingCalendarLink" class="doc-link-card" target="_blank">
+                                        <div class="doc-link-icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </div>
+                                        <div class="doc-link-info">
+                                            <div class="doc-link-title">Open Training Calendar</div>
+                                            <div class="doc-link-meta">Google Calendar</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courses Section -->
+                <div class="courses-section">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-book"></i>
+                                Available Courses
+                            </h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="courses-info">
+                                <p>Access course materials, resources, and completion tracking.</p>
+                                <div class="courses-links">
+                                    <a href="#" id="coursesLink" class="doc-link-card" target="_blank">
+                                        <div class="doc-link-icon">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </div>
+                                        <div class="doc-link-info">
+                                            <div class="doc-link-title">Course Catalog & Materials</div>
+                                            <div class="doc-link-meta">Google Docs</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="training-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="action-title">View Schedule</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <div class="action-title">My Certificates</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="action-title">Get Help</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="action-title">Ask Questions</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="progress-section">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-chart-line"></i>
+                                My Learning Progress
+                            </h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress-stats">
+                                <div class="progress-item">
+                                    <div class="progress-label">Courses Completed</div>
+                                    <div class="progress-number" id="completedCourses">-</div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-label">In Progress</div>
+                                    <div class="progress-number" id="inProgressCourses">-</div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-label">Certificates Earned</div>
+                                    <div class="progress-number" id="certificatesEarned">-</div>
+                                </div>
+                            </div>
+                            <div class="loading" id="progressLoading">
+                                <div class="spinner"></div>
+                                Loading progress...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
