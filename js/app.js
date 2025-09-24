@@ -1,13 +1,5 @@
 // ============================================
-// YOUR EXISTING DataChampsApp class continues here
-// ============================================
-
-
-
-
-
-// ============================================
-// SEARCHABLE DROPDOWN CLASS - Add at top of app.js
+// SEARCHABLE DROPDOWN CLASS
 // ============================================
 
 class SearchableDropdown {
@@ -148,22 +140,24 @@ class SearchableDropdown {
 window.searchableDropdowns = {};
 
 // ============================================
-// YOUR EXISTING DataChampsApp class starts here
+// MAIN DATACHAMPS APP CLASS
 // ============================================
-
 
 class DataChampsApp {
   constructor() {
     this.currentPage = this.getCurrentPage();
     this.userData = null;
     this.isInitialized = false;
+    this.userPermissions = [];
     this.appData = {
       tasks: null,
       kudos: null,
       celebrations: null,
       training: null,
       stats: null,
-      teamMembers: []
+      teamMembers: [],
+      announcements: null,
+      timesheets: null
     };
 
     console.log('📱 DataChampsApp created for page:', this.currentPage);
@@ -198,7 +192,10 @@ class DataChampsApp {
     this.isInitialized = true;
     console.log('🚀 Initializing DataChamps App for page:', this.currentPage);
 
-    // Load team members first (needed for dropdowns)
+    // Load user permissions first
+    await this.loadUserPermissions();
+    
+    // Load team members (needed for dropdowns)
     await this.loadTeamMembers();
     
     this.setupEventListeners();
@@ -211,6 +208,38 @@ class DataChampsApp {
       return 'index';
     }
     return path.split('/').pop().replace('.html', '') || 'index';
+  }
+
+  async loadUserPermissions() {
+    try {
+      console.log('Loading user permissions...');
+      this.userPermissions = await window.api.getUserPermissions();
+      console.log('User permissions:', this.userPermissions);
+      
+      // Show admin sections if user has permissions
+      this.updateUIBasedOnPermissions();
+    } catch (error) {
+      console.error('Failed to load user permissions:', error);
+      this.userPermissions = [];
+    }
+  }
+
+  updateUIBasedOnPermissions() {
+    const isAdmin = this.hasPermission('admin') || this.hasPermission('hr');
+    
+    // Show admin sections
+    const adminSections = document.querySelectorAll('.admin-section, #adminActions');
+    adminSections.forEach(section => {
+      if (isAdmin) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+  }
+
+  hasPermission(permission) {
+    return this.userPermissions && this.userPermissions.includes(permission);
   }
 
   async loadTeamMembers() {
@@ -245,6 +274,12 @@ class DataChampsApp {
         case 'training':
           await this.loadTrainingData();
           break;
+        case 'timesheets':
+          await this.loadTimesheetsData();
+          break;
+        case 'announcements':
+          await this.loadAnnouncementsData();
+          break;
       }
 
       console.log('User data loaded successfully');
@@ -252,6 +287,10 @@ class DataChampsApp {
       console.error('Failed to load user data:', error);
     }
   }
+
+  // ============================================
+  // DASHBOARD PAGE
+  // ============================================
 
   async loadDashboardData() {
     try {
@@ -336,42 +375,6 @@ class DataChampsApp {
         });
       }
 
-      // Get recent tasks assigned to user
-      const tasks = await window.api.getTasks(userEmail);
-      const recentTasks = [...(tasks.todo || []), ...(tasks.inProgress || [])]
-        .filter(t => {
-          const createdDate = new Date(t.createdAt);
-          const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-          return createdDate > dayAgo && t.assignedBy !== userEmail;
-        })
-        .slice(0, 3);
-
-      recentTasks.forEach(task => {
-        notifications.push({
-          type: 'task',
-          message: `📋 New task: ${task.title}`,
-          time: task.createdAt
-        });
-      });
-
-      // Get recent kudos
-      const kudos = await window.api.getKudos(userEmail);
-      const recentKudos = (kudos.received || [])
-        .filter(k => {
-          const kudosDate = new Date(k.createdAt);
-          const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-          return kudosDate > dayAgo;
-        })
-        .slice(0, 3);
-
-      recentKudos.forEach(k => {
-        notifications.push({
-          type: 'kudos',
-          message: `❤️ Kudos from ${k.fromUser}`,
-          time: k.createdAt
-        });
-      });
-
       // Store and display notifications
       this.appData.notifications = notifications;
       this.updateNotificationBadge(notifications.length);
@@ -419,7 +422,263 @@ class DataChampsApp {
     }
   }
 
-  // CELEBRATIONS PAGE
+  // ============================================
+  // TRAINING PAGE
+  // ============================================
+
+  async loadTrainingData() {
+    try {
+      console.log('Loading training data...');
+      
+      // For now, set static links - these will be loaded from API later
+      this.setTrainingLinks();
+      
+      // Load training progress stats
+      await this.loadTrainingProgress();
+      
+    } catch (error) {
+      console.error('Failed to load training data:', error);
+    }
+  }
+
+  setTrainingLinks() {
+    // Set calendar link
+    const calendarLink = document.getElementById('trainingCalendarLink');
+    if (calendarLink) {
+      // Replace with your actual Google Calendar link
+      calendarLink.href = 'https://calendar.google.com/calendar/u/0/r';
+    }
+
+    // Set courses link
+    const coursesLink = document.getElementById('coursesLink');
+    if (coursesLink) {
+      // Replace with your actual courses document link
+      coursesLink.href = 'https://docs.google.com/document/d/1234567890/edit';
+    }
+  }
+
+  async loadTrainingProgress() {
+    try {
+      // Hide loading and show placeholder stats for now
+      const loadingEl = document.getElementById('progressLoading');
+      if (loadingEl) loadingEl.style.display = 'none';
+      
+      // Set placeholder values
+      document.getElementById('completedCourses').textContent = '3';
+      document.getElementById('inProgressCourses').textContent = '2';
+      document.getElementById('certificatesEarned').textContent = '1';
+      
+    } catch (error) {
+      console.error('Failed to load training progress:', error);
+    }
+  }
+
+  // ============================================
+  // TIMESHEETS PAGE
+  // ============================================
+
+  async loadTimesheetsData() {
+    try {
+      console.log('Loading timesheets data...');
+      
+      // Load user's timesheet
+      const userTimesheet = await window.api.getUserTimesheet();
+      this.displayUserTimesheet(userTimesheet);
+      
+      // If user has admin permissions, load all timesheets
+      if (this.hasPermission('hr') || this.hasPermission('admin')) {
+        const allTimesheets = await window.api.getAllTimesheets();
+        this.displayAllTimesheets(allTimesheets);
+      }
+      
+      // Load timesheet stats
+      await this.loadTimesheetStats();
+      
+    } catch (error) {
+      console.error('Failed to load timesheets:', error);
+    }
+  }
+
+  displayUserTimesheet(timesheet) {
+    const container = document.getElementById('userTimesheetContainer');
+    if (!container) return;
+
+    if (timesheet && timesheet.link) {
+      container.innerHTML = `
+        <div class="timesheet-card">
+          <div class="timesheet-info">
+            <h4>Your Personal Timesheet</h4>
+            <p>Click below to access and update your timesheet</p>
+          </div>
+          <a href="${timesheet.link}" target="_blank" class="btn btn-primary" id="openTimesheetBtn">
+            <i class="fas fa-external-link-alt"></i>
+            Open My Timesheet
+          </a>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="no-timesheet">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>No timesheet found for your account. Please contact HR.</p>
+        </div>
+      `;
+    }
+  }
+
+  displayAllTimesheets(timesheets) {
+    const container = document.getElementById('allTimesheetsContainer');
+    if (!container || !timesheets) return;
+
+    if (timesheets.length > 0) {
+      container.innerHTML = timesheets.map(ts => `
+        <div class="timesheet-item">
+          <div class="timesheet-employee">
+            <strong>${ts.name}</strong>
+            <small>${ts.email}</small>
+          </div>
+          <a href="${ts.link}" target="_blank" class="btn btn-sm btn-outline">
+            <i class="fas fa-external-link-alt"></i>
+            View
+          </a>
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = '<div class="no-timesheets">No timesheets found</div>';
+    }
+  }
+
+  async loadTimesheetStats() {
+    // Placeholder stats for now
+    document.getElementById('weeklyHours').textContent = '40';
+    document.getElementById('todayHours').textContent = '8';
+    document.getElementById('submittedSheets').textContent = '12';
+    document.getElementById('pendingSubmissions').textContent = '0';
+  }
+
+  // ============================================
+  // ANNOUNCEMENTS PAGE
+  // ============================================
+
+  async loadAnnouncementsData() {
+    try {
+      console.log('Loading announcements data...');
+      
+      const announcements = await window.api.getAnnouncements();
+      this.displayAnnouncements(announcements);
+      
+      // Setup filter functionality
+      this.setupAnnouncementFilters();
+      
+    } catch (error) {
+      console.error('Failed to load announcements:', error);
+    }
+  }
+
+  displayAnnouncements(announcements) {
+    const container = document.getElementById('announcementsList');
+    const pinnedContainer = document.getElementById('pinnedAnnouncementsList');
+    
+    if (!announcements || announcements.length === 0) {
+      container.innerHTML = '<div class="no-announcements">No announcements available</div>';
+      pinnedContainer.innerHTML = '<div class="no-announcements">No pinned announcements</div>';
+      return;
+    }
+
+    // Separate pinned and regular announcements
+    const pinned = announcements.filter(a => a.pinned);
+    const regular = announcements.filter(a => !a.pinned);
+
+    // Display pinned announcements
+    if (pinned.length > 0) {
+      pinnedContainer.innerHTML = pinned.map(a => this.createAnnouncementCard(a, true)).join('');
+    } else {
+      pinnedContainer.innerHTML = '<div class="no-announcements">No pinned announcements</div>';
+    }
+
+    // Display regular announcements
+    if (regular.length > 0) {
+      container.innerHTML = regular.map(a => this.createAnnouncementCard(a, false)).join('');
+    } else {
+      container.innerHTML = '<div class="no-announcements">No announcements available</div>';
+    }
+  }
+
+  createAnnouncementCard(announcement, isPinned) {
+    const date = new Date(announcement.createdAt).toLocaleDateString();
+    const categoryClass = `category-${announcement.category || 'general'}`;
+    const priorityClass = announcement.priority === 'urgent' ? 'urgent' : '';
+    
+    if (isPinned) {
+      return `
+        <div class="pinned-announcement">
+          <div class="pinned-content">
+            <div class="pinned-title">${announcement.title}</div>
+            <div class="pinned-excerpt">${announcement.content.substring(0, 100)}...</div>
+            <div class="pinned-date">By ${announcement.authorName} • ${date}</div>
+          </div>
+          <div class="pinned-icon">
+            <i class="fas fa-thumbtack"></i>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="announcement-card ${priorityClass}" data-category="${announcement.category}">
+        <div class="announcement-header">
+          <div class="announcement-title">${announcement.title}</div>
+          <div class="announcement-meta">
+            <span class="announcement-author">By ${announcement.authorName}</span>
+            <span class="announcement-date">${date}</span>
+            <span class="announcement-category ${categoryClass}">${announcement.category}</span>
+            ${announcement.priority === 'urgent' ? '<span class="priority-badge urgent">URGENT</span>' : ''}
+            ${announcement.pinned ? '<i class="pinned-icon fas fa-thumbtack"></i>' : ''}
+          </div>
+        </div>
+        <div class="announcement-content">${announcement.content}</div>
+        ${this.hasPermission('admin') || this.hasPermission('hr') ? `
+          <div class="announcement-actions">
+            <button class="action-button" onclick="window.app.editAnnouncement('${announcement.id}')">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="action-button" onclick="window.app.deleteAnnouncement('${announcement.id}')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  setupAnnouncementFilters() {
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const announcements = document.querySelectorAll('.announcement-card');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Update active tab
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filter = tab.dataset.filter;
+
+        // Filter announcements
+        announcements.forEach(announcement => {
+          if (filter === 'all' || announcement.dataset.category === filter) {
+            announcement.style.display = 'block';
+          } else {
+            announcement.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  // ============================================
+  // EXISTING PAGES (TASKS, KUDOS, CELEBRATIONS)
+  // ============================================
+
   async loadCelebrationsData() {
     try {
       console.log('Loading celebrations data...');
@@ -675,15 +934,24 @@ class DataChampsApp {
     });
 
     // Update UI
-    document.getElementById('totalTasksCount').textContent = stats.total;
-    document.getElementById('activeTasksCount').textContent = stats.active;
-    document.getElementById('completedTasksCount').textContent = stats.completed;
-    document.getElementById('overdueTasksCount').textContent = stats.overdue;
+    const totalEl = document.getElementById('totalTasksCount');
+    const activeEl = document.getElementById('activeTasksCount');
+    const completedEl = document.getElementById('completedTasksCount');
+    const overdueEl = document.getElementById('overdueTasksCount');
+    
+    if (totalEl) totalEl.textContent = stats.total;
+    if (activeEl) activeEl.textContent = stats.active;
+    if (completedEl) completedEl.textContent = stats.completed;
+    if (overdueEl) overdueEl.textContent = stats.overdue;
 
     // Update column counts
-    document.getElementById('todoCount').textContent = tasks.todo?.length || 0;
-    document.getElementById('inProgressCount').textContent = tasks.inProgress?.length || 0;
-    document.getElementById('completedCount').textContent = tasks.completed?.length || 0;
+    const todoCountEl = document.getElementById('todoCount');
+    const inProgressCountEl = document.getElementById('inProgressCount');
+    const completedCountEl = document.getElementById('completedCount');
+    
+    if (todoCountEl) todoCountEl.textContent = tasks.todo?.length || 0;
+    if (inProgressCountEl) inProgressCountEl.textContent = tasks.inProgress?.length || 0;
+    if (completedCountEl) completedCountEl.textContent = tasks.completed?.length || 0;
   }
 
   displayTasks(tasks) {
@@ -809,40 +1077,42 @@ class DataChampsApp {
     }
 
     // Update stats
-    document.getElementById('totalReceived').textContent = kudos.received?.length || 0;
-    document.getElementById('totalSent').textContent = kudos.sent?.length || 0;
+    const totalReceivedEl = document.getElementById('totalReceived');
+    const totalSentEl = document.getElementById('totalSent');
+    const thisMonthEl = document.getElementById('thisMonth');
+    
+    if (totalReceivedEl) totalReceivedEl.textContent = kudos.received?.length || 0;
+    if (totalSentEl) totalSentEl.textContent = kudos.sent?.length || 0;
     
     const thisMonth = kudos.received?.filter(k => {
       const date = new Date(k.createdAt);
       const now = new Date();
       return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
     }).length || 0;
-    document.getElementById('thisMonth').textContent = thisMonth;
+    if (thisMonthEl) thisMonthEl.textContent = thisMonth;
   }
 
   populateKudosDropdown() {
-  const input = document.getElementById('kudosToSearch');
-  if (!input || !this.appData.teamMembers) return;
+    const input = document.getElementById('kudosToSearch');
+    if (!input || !this.appData.teamMembers) return;
 
-  const currentUser = window.auth.getUserEmail();
-  const availableMembers = this.appData.teamMembers.filter(
-    member => member.email !== currentUser
-  );
+    const currentUser = window.auth.getUserEmail();
+    const availableMembers = this.appData.teamMembers.filter(
+      member => member.email !== currentUser
+    );
 
-  window.searchableDropdowns['kudosToSearch'] = new SearchableDropdown(
-    'kudosToSearch',
-    availableMembers,
-    (option) => {
-      console.log('Selected kudos recipient:', option);
-    }
-  );
-}
-
-
-  // TRAINING PAGE
-  async loadTrainingData() {
-    console.log('Loading training data - not implemented yet');
+    window.searchableDropdowns['kudosToSearch'] = new SearchableDropdown(
+      'kudosToSearch',
+      availableMembers,
+      (option) => {
+        console.log('Selected kudos recipient:', option);
+      }
+    );
   }
+
+  // ============================================
+  // EVENT LISTENERS & FORM HANDLERS
+  // ============================================
 
   setupEventListeners() {
     console.log('Setting up event listeners');
@@ -873,7 +1143,24 @@ class DataChampsApp {
       });
     }
 
-    // Populate task assignment dropdown
+    // Announcement form submission
+    const announcementForm = document.getElementById('announcementForm');
+    if (announcementForm) {
+      announcementForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await this.handleAnnouncementSubmit(e);
+      });
+    }
+
+    // Add Announcement button
+    const addAnnouncementBtn = document.getElementById('addAnnouncementBtn');
+    if (addAnnouncementBtn) {
+      addAnnouncementBtn.addEventListener('click', () => {
+        this.showAnnouncementModal();
+      });
+    }
+
+    // Populate dropdowns
     this.populateTaskAssignmentDropdown();
 
     // Notification button
@@ -891,92 +1178,146 @@ class DataChampsApp {
     }
   }
 
-  populateTaskAssignmentDropdown() {
-  const input = document.getElementById('taskAssignToSearch');
-  if (!input || !this.appData.teamMembers) return;
-
-  window.searchableDropdowns['taskAssignToSearch'] = new SearchableDropdown(
-    'taskAssignToSearch',
-    this.appData.teamMembers,
-    (option) => {
-      console.log('Selected assignee:', option);
+  showAnnouncementModal() {
+    const modal = document.getElementById('announcementModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('modalTitle').textContent = 'New Announcement';
+      document.getElementById('announcementForm').reset();
     }
-  );
-}
+  }
+
+  populateTaskAssignmentDropdown() {
+    const input = document.getElementById('taskAssignToSearch');
+    if (!input || !this.appData.teamMembers) return;
+
+    window.searchableDropdowns['taskAssignToSearch'] = new SearchableDropdown(
+      'taskAssignToSearch',
+      this.appData.teamMembers,
+      (option) => {
+        console.log('Selected assignee:', option);
+      }
+    );
+  }
 
   async handleTaskSubmit(e) {
-  const formData = new FormData(e.target);
-  const currentUser = window.auth.getUserEmail();
-  
-  const assignToInput = document.getElementById('taskAssignToSearch');
-  const assignedTo = assignToInput?.dataset?.selectedEmail || currentUser;
-  
-  const taskData = {
-    title: formData.get('title'),
-    description: formData.get('description'),
-    dueDate: formData.get('dueDate'),
-    assignedTo: assignedTo,
-    assignedBy: currentUser,
-    status: 'To Do',
-    createdAt: new Date().toISOString()
-  };
+    const formData = new FormData(e.target);
+    const currentUser = window.auth.getUserEmail();
+    
+    const assignToInput = document.getElementById('taskAssignToSearch');
+    const assignedTo = assignToInput?.dataset?.selectedEmail || currentUser;
+    
+    const taskData = {
+      title: formData.get('title'),
+      description: formData.get('description'),
+      dueDate: formData.get('dueDate'),
+      assignedTo: assignedTo,
+      assignedBy: currentUser,
+      status: 'To Do',
+      createdAt: new Date().toISOString()
+    };
 
-  try {
-    await window.api.createTask(taskData);
-    window.api.showSuccessNotification('Task created successfully!');
-    
-    document.getElementById('taskModal').style.display = 'none';
-    e.target.reset();
-    if (assignToInput) {
-      assignToInput.value = '';
-      delete assignToInput.dataset.selectedEmail;
+    try {
+      await window.api.createTask(taskData);
+      window.api.showSuccessNotification('Task created successfully!');
+      
+      document.getElementById('taskModal').style.display = 'none';
+      e.target.reset();
+      if (assignToInput) {
+        assignToInput.value = '';
+        delete assignToInput.dataset.selectedEmail;
+      }
+      
+      await this.loadTasksData();
+      
+    } catch (error) {
+      console.error('Failed to create task:', error);
+      window.api.showErrorNotification('Failed to create task');
     }
-    
-    await this.loadTasksData();
-    
-  } catch (error) {
-    console.error('Failed to create task:', error);
-    window.api.showErrorNotification('Failed to create task');
   }
-}
 
   async handleKudosSubmit(e) {
-  const formData = new FormData(e.target);
-  const currentUser = window.auth.getUserEmail();
-  
-  const kudosToInput = document.getElementById('kudosToSearch');
-  const toUser = kudosToInput?.dataset?.selectedEmail;
-  
-  if (!toUser) {
-    window.api.showErrorNotification('Please select a recipient');
-    return;
-  }
-  
-  const kudosData = {
-    fromUser: currentUser,
-    toUser: toUser,
-    message: formData.get('message'),
-    category: formData.get('category'),
-    createdAt: new Date().toISOString()
-  };
-
-  try {
-    await window.api.sendKudos(kudosData);
-    window.api.showSuccessNotification('Kudos sent successfully!');
+    const formData = new FormData(e.target);
+    const currentUser = window.auth.getUserEmail();
     
-    e.target.reset();
-    if (kudosToInput) {
-      kudosToInput.value = '';
-      delete kudosToInput.dataset.selectedEmail;
+    const kudosToInput = document.getElementById('kudosToSearch');
+    const toUser = kudosToInput?.dataset?.selectedEmail;
+    
+    if (!toUser) {
+      window.api.showErrorNotification('Please select a recipient');
+      return;
     }
     
-    await this.loadKudosData();
-    
-  } catch (error) {
-    console.error('Failed to send kudos:', error);
-    window.api.showErrorNotification('Failed to send kudos');
+    const kudosData = {
+      fromUser: currentUser,
+      toUser: toUser,
+      message: formData.get('message'),
+      category: formData.get('category'),
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      await window.api.sendKudos(kudosData);
+      window.api.showSuccessNotification('Kudos sent successfully!');
+      
+      e.target.reset();
+      if (kudosToInput) {
+        kudosToInput.value = '';
+        delete kudosToInput.dataset.selectedEmail;
+      }
+      
+      await this.loadKudosData();
+      
+    } catch (error) {
+      console.error('Failed to send kudos:', error);
+      window.api.showErrorNotification('Failed to send kudos');
+    }
   }
-}
+
+  async handleAnnouncementSubmit(e) {
+    const formData = new FormData(e.target);
+    
+    const announcementData = {
+      title: formData.get('title'),
+      content: formData.get('content'),
+      category: formData.get('category'),
+      priority: formData.get('priority'),
+      pinned: formData.get('pinned') === 'on',
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      await window.api.createAnnouncement(announcementData);
+      window.api.showSuccessNotification('Announcement published successfully!');
+      
+      document.getElementById('announcementModal').style.display = 'none';
+      e.target.reset();
+      
+      await this.loadAnnouncementsData();
+      
+    } catch (error) {
+      console.error('Failed to create announcement:', error);
+      window.api.showErrorNotification('Failed to publish announcement');
+    }
+  }
+
+  async editAnnouncement(id) {
+    // Implementation for editing announcements
+    console.log('Edit announcement:', id);
+  }
+
+  async deleteAnnouncement(id) {
+    if (confirm('Are you sure you want to delete this announcement?')) {
+      try {
+        await window.api.deleteAnnouncement(id);
+        window.api.showSuccessNotification('Announcement deleted successfully!');
+        await this.loadAnnouncementsData();
+      } catch (error) {
+        console.error('Failed to delete announcement:', error);
+        window.api.showErrorNotification('Failed to delete announcement');
+      }
+    }
+  }
 
   showNotifications() {
     const notifications = this.appData.notifications || [];
@@ -1028,10 +1369,8 @@ class DataChampsApp {
   }
 }
 
+// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   console.log('📄 DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
-
-
-
