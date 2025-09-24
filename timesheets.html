@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataChamps Hangout - My Timesheet</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>⏰ My Timesheet</h1>
+                    <p>Track your working hours and submit timesheets</p>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <!-- User's Timesheet Section -->
+                <div class="timesheet-section">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-clock"></i>
+                                Your Timesheet
+                            </h3>
+                            <span class="widget-subtitle">Personal timesheet access</span>
+                        </div>
+                        <div class="widget-content">
+                            <div id="userTimesheetContainer">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading your timesheet...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="timesheet-stats">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="weeklyHours">0</div>
+                                <div class="stat-label">Hours This Week</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="todayHours">0</div>
+                                <div class="stat-label">Hours Today</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="submittedSheets">0</div>
+                                <div class="stat-label">Submitted Sheets</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="pendingSubmissions">0</div>
+                                <div class="stat-label">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="timesheet-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <a href="#" id="openTimesheetBtn" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-external-link-alt"></i>
+                            </div>
+                            <div class="action-title">Open Timesheet</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="action-title">Download Report</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="action-title">View History</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="action-title">Help & Support</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-history"></i>
+                                Recent Timesheet Activity
+                            </h3>
+                        </div>
+                        <div class="widget-content">
+                            <div id="recentTimesheetActivity" class="activity-list">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading activity...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- For HR/Admin: All Timesheets (only visible to authorized users) -->
+                <div class="admin-section" id="adminTimesheetSection" style="display: none;">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3>
+                                <i class="fas fa-users"></i>
+                                All Team Timesheets
+                            </h3>
+                            <span class="widget-subtitle">HR/Admin access only</span>
+                        </div>
+                        <div class="widget-content">
+                            <div id="allTimesheetsContainer">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    Loading all timesheets...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
