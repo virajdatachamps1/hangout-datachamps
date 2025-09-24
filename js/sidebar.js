@@ -43,9 +43,9 @@ class SidebarComponent {
               <span>My Tasks</span>
               <span class="nav-badge" id="taskBadge">5</span>
             </a>
-            <a href="training.html" class="nav-link ${this.currentPage === 'training' ? 'active' : ''}">
-              <i class="fas fa-calendar"></i>
-              <span>Training Calendar</span>
+            <a href="timesheets.html" class="nav-link ${this.currentPage === 'timesheets' ? 'active' : ''}">
+              <i class="fas fa-clock"></i>
+              <span>Timesheets</span>
             </a>
             <a href="celebrations.html" class="nav-link ${this.currentPage === 'celebrations' ? 'active' : ''}">
               <i class="fas fa-birthday-cake"></i>
@@ -71,38 +71,34 @@ class SidebarComponent {
           </div>
 
           <div class="nav-section">
-            <div class="nav-section-title">Operations</div>
+            <div class="nav-section-title">Team & Recognition</div>
+            <a href="kudos.html" class="nav-link ${this.currentPage === 'kudos' ? 'active' : ''}">
+              <i class="fas fa-heart"></i>
+              <span>Give Kudos</span>
+            </a>
             <a href="#" class="nav-link">
-              <i class="fas fa-clock"></i>
-              <span>Timesheets</span>
+              <i class="fas fa-user-plus"></i>
+              <span>Onboarding</span>
+            </a>
+            <a href="photos.html" class="nav-link ${this.currentPage === 'photos' ? 'active' : ''}">
+              <i class="fas fa-images"></i>
+              <span>Company Photos</span>
+            </a>
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Company</div>
+            <a href="announcements.html" class="nav-link ${this.currentPage === 'announcements' ? 'active' : ''}">
+              <i class="fas fa-bullhorn"></i>
+              <span>Announcements</span>
             </a>
             <a href="sop.html" class="nav-link ${this.currentPage === 'sop' ? 'active' : ''}">
               <i class="fas fa-file-alt"></i>
               <span>SOPs & Policies</span>
             </a>
             <a href="#" class="nav-link">
-              <i class="fas fa-user-plus"></i>
-              <span>Onboarding</span>
-            </a>
-            <a href="kudos.html" class="nav-link ${this.currentPage === 'kudos' ? 'active' : ''}">
-              <i class="fas fa-heart"></i>
-              <span>Give Kudos</span>
-            </a>
-          </div>
-
-          <div class="nav-section">
-            <div class="nav-section-title">Company</div>
-            <a href="#" class="nav-link">
-              <i class="fas fa-bullhorn"></i>
-              <span>Announcements</span>
-            </a>
-            <a href="#" class="nav-link">
               <i class="fas fa-building"></i>
               <span>Company Profile</span>
-            </a>
-            <a href="photos.html" class="nav-link ${this.currentPage === 'photos' ? 'active' : ''}">
-              <i class="fas fa-images"></i>
-              <span>Company Photos</span>
             </a>
           </div>
         </nav>
