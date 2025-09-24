@@ -1,4 +1,3 @@
-
 // Debug mode - set to false in production
 const DEBUG_MODE = true;
 
@@ -18,63 +17,62 @@ class APIManager {
     this.apiSecret = API_SECRET;
   }
 
- async makeRequest(action, data = {}, method = 'POST') {
-  try {
-    const userEmail = window.auth ? window.auth.getUserEmail() : null;
-    
-    debugLog('Making request:', action, 'Method:', method, 'User:', userEmail);
+  async makeRequest(action, data = {}, method = 'POST') {
+    try {
+      const userEmail = window.auth ? window.auth.getUserEmail() : null;
+      
+      debugLog('Making request:', action, 'Method:', method, 'User:', userEmail);
 
-    const requestData = {
-      action,
-      data,
-      user: userEmail,
-      apiSecret: this.apiSecret,
-      timestamp: new Date().toISOString()
-    };
-
-    let url = this.baseURL;
-    let options = { method };
-
-    if (method === 'POST') {
-      options.headers = {
-        'Content-Type': 'text/plain'  // CHANGED: was application/json
-      };
-      options.body = JSON.stringify(requestData);
-    } else {
-      // GET request - NO HEADERS (this avoids CORS preflight)
-      const params = new URLSearchParams({
+      const requestData = {
         action,
-        data: JSON.stringify(data),
-        user: userEmail || '',
+        data,
+        user: userEmail,
         apiSecret: this.apiSecret,
         timestamp: new Date().toISOString()
-      });
-      url += `?${params.toString()}`;
-      // REMOVED: all headers for GET requests
+      };
+
+      let url = this.baseURL;
+      let options = { method };
+
+      if (method === 'POST') {
+        options.headers = {
+          'Content-Type': 'text/plain'
+        };
+        options.body = JSON.stringify(requestData);
+      } else {
+        // GET request - NO HEADERS (this avoids CORS preflight)
+        const params = new URLSearchParams({
+          action,
+          data: JSON.stringify(data),
+          user: userEmail || '',
+          apiSecret: this.apiSecret,
+          timestamp: new Date().toISOString()
+        });
+        url += `?${params.toString()}`;
+      }
+
+      debugLog('Request URL:', url);
+
+      const response = await fetch(url, options);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      debugLog('API response for', action, ':', result);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'API request failed');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error(`API Error (${action}):`, error);
+      this.handleError(error, action);
+      throw error;
     }
-
-    debugLog('Request URL:', url);
-
-    const response = await fetch(url, options);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    debugLog('API response for', action, ':', result);
-    
-    if (!result.success) {
-      throw new Error(result.error || 'API request failed');
-    }
-
-    return result.data;
-  } catch (error) {
-    console.error(`API Error (${action}):`, error);
-    this.handleError(error, action);
-    throw error;
   }
-}
 
   // User Management
   async registerUser(userData) {
@@ -170,6 +168,69 @@ class APIManager {
     }, 'GET');
   }
 
+  // NEW: Training & Courses
+  async getTrainingCalendar() {
+    return await this.makeRequest('getTrainingCalendar', {}, 'GET');
+  }
+
+  async getCourses() {
+    return await this.makeRequest('getCourses', {}, 'GET');
+  }
+
+  // NEW: Timesheets
+  async getUserTimesheet(email = null) {
+    return await this.makeRequest('getUserTimesheet', { 
+      email: email || window.auth.getUserEmail() 
+    }, 'GET');
+  }
+
+  async getAllTimesheets() {
+    return await this.makeRequest('getAllTimesheets', {}, 'GET');
+  }
+
+  // NEW: Announcements
+  async getAnnouncements() {
+    return await this.makeRequest('getAnnouncements', {}, 'GET');
+  }
+
+  async createAnnouncement(announcementData) {
+    return await this.makeRequest('createAnnouncement', {
+      ...announcementData,
+      author: window.auth.getUserEmail(),
+      authorName: window.auth.getUserName(),
+      createdAt: new Date().toISOString()
+    });
+  }
+
+  async updateAnnouncement(id, updates) {
+    return await this.makeRequest('updateAnnouncement', { id, updates });
+  }
+
+  async deleteAnnouncement(id) {
+    return await this.makeRequest('deleteAnnouncement', { id });
+  }
+
+  // NEW: User Permissions
+  async getUserPermissions(email = null) {
+    return await this.makeRequest('getUserPermissions', { 
+      email: email || window.auth.getUserEmail() 
+    }, 'GET');
+  }
+
+  async checkPermission(permission, email = null) {
+    const permissions = await this.getUserPermissions(email);
+    return permissions && permissions.includes(permission);
+  }
+
+  // NEW: Photos
+  async getPhotos() {
+    return await this.makeRequest('getPhotos', {}, 'GET');
+  }
+
+  async uploadPhotos(photos) {
+    return await this.makeRequest('uploadPhotos', { photos });
+  }
+
   // Utility Methods
   async healthCheck() {
     try {
@@ -178,6 +239,25 @@ class APIManager {
       return result;
     } catch (error) {
       console.error('Health check failed:', error);
+      return false;
+    }
+  }
+
+  // Test API connectivity
+  async testConnection() {
+    try {
+      console.log('Testing API connection...');
+      const result = await this.healthCheck();
+      if (result) {
+        this.showSuccessNotification('API connection successful!');
+        return true;
+      } else {
+        this.showErrorNotification('API connection failed!');
+        return false;
+      }
+    } catch (error) {
+      console.error('Connection test failed:', error);
+      this.showErrorNotification('Failed to connect to API. Please check your configuration.');
       return false;
     }
   }
@@ -271,43 +351,6 @@ class APIManager {
       }
     }, 3000);
   }
-
-  // Test API connectivity
-async testConnection() {
-  try {
-    console.log('Testing API connection...');
-    const result = await this.healthCheck();
-    if (result) {
-      this.showSuccessNotification('API connection successful!');
-      return true;
-    } else {
-      this.showErrorNotification('API connection failed!');
-      return false;
-    }
-  } catch (error) {
-    console.error('Connection test failed:', error);
-    this.showErrorNotification('Failed to connect to API. Please check your configuration.');
-    return false;
-  }
-}
-// Add to APIManager class in api.js
-
-async getAnnouncements() {
-  return await this.makeRequest('getAnnouncements', {}, 'GET');
- },
-
-async createAnnouncement(announcementData) {
-  return await this.makeRequest('createAnnouncement', announcementData);
- },
-
-async getPhotos() {
-  return await this.makeRequest('getPhotos', {}, 'GET');
- },
-
-async uploadPhotos(photos) {
-  return await this.makeRequest('uploadPhotos', { photos });
- }
-
 }
 
 // Initialize API manager
@@ -318,16 +361,3 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
