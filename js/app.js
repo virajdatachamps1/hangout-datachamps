@@ -1,4 +1,54 @@
 // ============================================
+// API MOCK - Add this section
+// ============================================
+
+// Initialize window.api if it doesn't exist
+if (!window.api) {
+  window.api = {};
+}
+
+// Add missing methods
+window.api.getTeamMembers = async function() {
+  // Return sample team members for now
+  return [
+    { name: "John Doe", email: "john.doe@datachamps.ai" },
+    { name: "Jane Smith", email: "jane.smith@datachamps.ai" },
+    { name: "Mike Johnson", email: "mike.johnson@datachamps.ai" },
+    { name: "Sarah Wilson", email: "sarah.wilson@datachamps.ai" }
+  ];
+};
+
+window.api.getTasks = async function(userEmail) {
+  // Return empty tasks structure for now
+  return {
+    todo: [],
+    inProgress: [],
+    completed: []
+  };
+};
+
+// Add other missing methods that might be called
+if (!window.api.showSuccessNotification) {
+  window.api.showSuccessNotification = function(message) {
+    alert("Success: " + message);
+  };
+}
+
+if (!window.api.showErrorNotification) {
+  window.api.showErrorNotification = function(message) {
+    alert("Error: " + message);
+  };
+}
+
+// ============================================
+// YOUR EXISTING DataChampsApp class continues here
+// ============================================
+
+
+
+
+
+// ============================================
 // SEARCHABLE DROPDOWN CLASS - Add at top of app.js
 // ============================================
 
@@ -1024,4 +1074,5 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('📄 DOM loaded, creating app instance...');
   window.app = new DataChampsApp();
 });
+
 
