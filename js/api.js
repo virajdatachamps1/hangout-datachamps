@@ -273,24 +273,24 @@ class APIManager {
   }
 
   // Test API connectivity
-  async testConnection() {
-    try {
-      console.log('Testing API connection...');
-      const result = await this.healthCheck();
-      if (result) {
-        this.showSuccessNotification('API connection successful!');
-        return true;
-      } else {
-        this.showErrorNotification('API connection failed!');
-        return false;
-      }
-    } catch (error) {
-      console.error('Connection test failed:', error);
-      this.showErrorNotification('Failed to connect to API. Please check your configuration.');
+async testConnection() {
+  try {
+    console.log('Testing API connection...');
+    const result = await this.healthCheck();
+    if (result) {
+      this.showSuccessNotification('API connection successful!');
+      return true;
+    } else {
+      this.showErrorNotification('API connection failed!');
       return false;
     }
-  },
-  // Add to APIManager class in api.js
+  } catch (error) {
+    console.error('Connection test failed:', error);
+    this.showErrorNotification('Failed to connect to API. Please check your configuration.');
+    return false;
+  }
+}
+// Add to APIManager class in api.js
 
 async getAnnouncements() {
   return await this.makeRequest('getAnnouncements', {}, 'GET');
@@ -318,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
+
 
 
 
