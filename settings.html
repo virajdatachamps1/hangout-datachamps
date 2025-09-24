@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - DataChamps Hangout</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar container for dynamic injection -->
+        <div id="sidebar-container"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <h1 class="page-title">Settings</h1>
+                <div class="top-actions">
+                    <button class="action-btn" onclick="saveAllSettings()">
+                        <i class="fas fa-save"></i>
+                        Save All Changes
+                    </button>
+                    <button id="notificationBtn" class="action-btn">
+                        <i class="fas fa-bell"></i>
+                        <span id="notificationBadge" class="notification-badge">0</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Settings Navigation -->
+                <div class="settings-nav">
+                    <button class="settings-nav-item active" data-section="profile">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </button>
+                    <button class="settings-nav-item" data-section="preferences">
+                        <i class="fas fa-cog"></i>
+                        Preferences
+                    </button>
+                    <button class="settings-nav-item" data-section="notifications">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </button>
+                    <button class="settings-nav-item" data-section="security">
+                        <i class="fas fa-shield-alt"></i>
+                        Security
+                    </button>
+                    <button class="settings-nav-item" data-section="integrations">
+                        <i class="fas fa-plug"></i>
+                        Integrations
+                    </button>
+                </div>
+
+                <!-- Settings Sections -->
+                <div class="settings-content">
+                    <!-- Profile Section -->
+                    <div id="profile-section" class="settings-section active">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h2 class="widget-title">
+                                    <i class="fas fa-user"></i>
+                                    Personal Information
+                                </h2>
+                            </div>
+                            <div class="widget-content">
+                                <form class="settings-form" id="profileForm">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" name="firstName" placeholder="Enter your first name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" name="lastName" placeholder="Enter your last name" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email Address</label>
+                                        <input type="email" name="email" placeholder="Enter your email" readonly>
+                                        <small>Email is managed through your account settings</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Job Title</label>
+                                        <input type="text" name="jobTitle" placeholder="Enter your job title">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Department</label>
+                                        <select name="department">
+                                            <option value="">Select Department</option>
+                                            <option value="data-science">Data Science</option>
+                                            <option value="engineering">Engineering</option>
+                                            <option value="marketing">Marketing</option>
+                                            <option value="sales">Sales</option>
+                                            <option value="hr">Human Resources</option>
+                                            <option value="operations">Operations</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <input type="text" name="role" placeholder="Your role in the company" readonly>
+                                        <small>Role is automatically assigned</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Bio</label>
+                                        <textarea name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Update Profile
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Section -->
+                    <div id="preferences-section" class="settings-section">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h2 class="widget-title">
+                                    <i class="fas fa-cog"></i>
+                                    Display Settings
+                                </h2>
+                            </div>
+                            <div class="widget-content">
+                                <div class="preference-group">
+                                    <div class="preference-item">
+                                        <div class="preference-info">
+                                            <strong>Theme Preference</strong>
+                                            <p>Choose your preferred color scheme</p>
+                                        </div>
+                                        <select class="preference-control" id="themeSelect">
+                                            <option value="light">Light Theme</option>
+                                            <option value="dark">Dark Theme</option>
+                                            <option value="auto">Auto (System)</option>
+                                        </select>
+                                    </div>
+                                    <div class="preference-item">
+                                        <div class="preference-info">
+                                            <strong>Sidebar Collapse</strong>
+                                            <p>Auto-collapse sidebar on smaller screens</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="sidebarCollapse">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="preference-item">
+                                        <div class="preference-info">
+                                            <strong>Language</strong>
+                                            <p>Select your preferred language</p>
+                                        </div>
+                                        <select class="preference-control" id="languageSelect">
+                                            <option value="en">English</option>
+                                            <option value="es">Español</option>
+                                            <option value="fr">Français</option>
+                                        </select>
+                                    </div>
+                                    <div class="preference-item">
+                                        <div class="preference-info">
+                                            <strong>Time Zone</strong>
+                                            <p>Your local time zone for date/time display</p>
+                                        </div>
+                                        <select class="preference-control" id="timezoneSelect">
+                                            <option value="UTC">UTC (GMT+0)</option>
+                                            <option value="EST">Eastern Time (GMT-5)</option>
+                                            <option value="PST">Pacific Time (GMT-8)</option>
+                                            <option value="IST">India Standard Time (GMT+5:30)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Section -->
+                    <div id="notifications-section" class="settings-section">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h2 class="widget-title">
+                                    <i class="fas fa-bell"></i>
+                                    Notification Preferences
+                                </h2>
+                            </div>
+                            <div class="widget-content">
+                                <div class="notification-groups">
+                                    <div class="notification-group">
+                                        <h4>Birthday & Anniversary Alerts</h4>
+                                        <div class="notification-item">
+                                            <div class="notification-info">
+                                                <strong>Birthday Notifications</strong>
+                                                <p>Get notified about team member birthdays</p>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" id="birthdayAlerts" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="notification-info">
+                                                <strong>Anniversary Alerts</strong>
+                                                <p>Work anniversary notifications</p>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" id="anniversaryAlerts" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-group">
+                                        <h4>Task Notifications</h4>
+                                        <div class="notification-item">
+                                            <div class="notification-info">
+                                                <strong>Task Assignments</strong>
+                                                <p>When you're assigned new tasks</p>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" id="taskNotifications" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="notification-info">
+                                                <strong>Due Date Reminders</strong>
+                                                <p>Reminders for upcoming task deadlines</p>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" id="dueDateReminders" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-group">
+                                        <h4>Kudos Notifications</h4>
+                                        <div class="notification-item">
+                                            <div class="notification-info">
+                                                <strong>Kudos Received</strong>
+                                                <p>When someone gives you kudos</p>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" id="kudosNotifications" checked>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="notification-item">
+                                            <div class="notification-info">
+                                                <strong>Team Kudos</strong>
+                                                <p>See kudos given to other team members</p>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" id="teamKudos">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Section -->
+                    <div id="security-section" class="settings-section">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h2 class="widget-title">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Account Settings
+                                </h2>
+                            </div>
+                            <div class="widget-content">
+                                <div class="security-section">
+                                    <h4>Change Password</h4>
+                                    <form class="security-form" id="passwordForm">
+                                        <div class="form-group">
+                                            <label>Current Password</label>
+                                            <input type="password" name="currentPassword" placeholder="Enter current password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>New Password</label>
+                                            <input type="password" name="newPassword" placeholder="Enter new password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Confirm New Password</label>
+                                            <input type="password" name="confirmPassword" placeholder="Confirm new password" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-key"></i>
+                                            Update Password
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <div class="security-section">
+                                    <h4>Account Actions</h4>
+                                    <div class="security-actions">
+                                        <button class="btn btn-outline" onclick="exportData()">
+                                            <i class="fas fa-download"></i>
+                                            Export My Data
+                                        </button>
+                                        <button class="btn btn-danger" onclick="logout()">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Integrations Section -->
+                    <div id="integrations-section" class="settings-section">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h2 class="widget-title">
+                                    <i class="fas fa-plug"></i>
+                                    Data Management
+                                </h2>
+                            </div>
+                            <div class="widget-content">
+                                <div class="integrations-list">
+                                    <div class="integration-item">
+                                        <div class="integration-icon">
+                                            <i class="fas fa-database"></i>
+                                        </div>
+                                        <div class="integration-info">
+                                            <strong>Data Export</strong>
+                                            <p>Export your personal data and activity</p>
+                                        </div>
+                                        <button class="btn-small btn-primary" onclick="exportData()">
+                                            Export
+                                        </button>
+                                    </div>
+                                    <div class="integration-item">
+                                        <div class="integration-icon">
+                                            <i class="fas fa-user-times"></i>
+                                        </div>
+                                        <div class="integration-info">
+                                            <strong>Account Deactivation</strong>
+                                            <p>Temporarily deactivate your account</p>
+                                        </div>
+                                        <button class="btn-small btn-outline" onclick="deactivateAccount()">
+                                            Deactivate
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login Required</h2>
+            </div>
+            <div class="modal-body">
+                <p>Please log in to access DataChamps Hangout.</p>
+                <div id="clerk-signin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts - Keep this order -->
+    <script src="js/sidebar.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setupSettingsNavigation();
+            setupFormHandlers();
+            loadUserSettings();
+        });
+
+        function setupSettingsNavigation() {
+            const navItems = document.querySelectorAll('.settings-nav-item');
+            const sections = document.querySelectorAll('.settings-section');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const targetSection = this.getAttribute('data-section');
+                    
+                    // Remove active class from all nav items and sections
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    // Add active class to clicked nav item and corresponding section
+                    this.classList.add('active');
+                    document.getElementById(targetSection + '-section').classList.add('active');
+                });
+            });
+        }
+
+        function setupFormHandlers() {
+            // Profile form
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveProfile();
+                });
+            }
+
+            // Password form
+            const passwordForm = document.getElementById('passwordForm');
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    changePassword();
+                });
+            }
+        }
+
+        function loadUserSettings() {
+            if (window.auth && window.auth.isAuthenticated()) {
+                const userEmail = window.auth.getUserEmail();
+                const userName = window.auth.getUserName();
+                
+                // Pre-populate form fields
+                document.querySelector('input[name="email"]').value = userEmail || '';
+                if (userName) {
+                    const nameParts = userName.split(' ');
+                    document.querySelector('input[name="firstName"]').value = nameParts[0] || '';
+                    document.querySelector('input[name="lastName"]').value = nameParts.slice(1).join(' ') || '';
+                }
+            }
+        }
+
+        async function saveProfile() {
+            try {
+                const formData = new FormData(document.getElementById('profileForm'));
+                const profileData = Object.fromEntries(formData);
+                
+                // Here you would typically call your API
+                console.log('Saving profile:', profileData);
+                
+                if (window.api && window.api.showSuccessNotification) {
+                    window.api.showSuccessNotification('Profile updated successfully!');
+                } else {
+                    alert('Profile updated successfully!');
+                }
+            } catch (error) {
+                console.error('Failed to save profile:', error);
+                if (window.api && window.api.showErrorNotification) {
+                    window.api.showErrorNotification('Failed to update profile');
+                } else {
+                    alert('Failed to update profile');
+                }
+            }
+        }
+
+        async function changePassword() {
+            try {
+                const formData = new FormData(document.getElementById('passwordForm'));
+                const passwordData = Object.fromEntries(formData);
+                
+                if (passwordData.newPassword !== passwordData.confirmPassword) {
+                    alert('New passwords do not match');
+                    return;
+                }
+                
+                // Here you would typically call your API
+                console.log('Changing password...');
+                
+                if (window.api && window.api.showSuccessNotification) {
+                    window.api.showSuccessNotification('Password updated successfully!');
+                } else {
+                    alert('Password updated successfully!');
+                }
+                
+                // Clear form
+                document.getElementById('passwordForm').reset();
+            } catch (error) {
+                console.error('Failed to change password:', error);
+                if (window.api && window.api.showErrorNotification) {
+                    window.api.showErrorNotification('Failed to change password');
+                } else {
+                    alert('Failed to change password');
+                }
+            }
+        }
+
+        function saveAllSettings() {
+            // Collect all settings and save
+            const settings = {
+                theme: document.getElementById('themeSelect')?.value,
+                sidebarCollapse: document.getElementById('sidebarCollapse')?.checked,
+                language: document.getElementById('languageSelect')?.value,
+                timezone: document.getElementById('timezoneSelect')?.value,
+                notifications: {
+                    birthday: document.getElementById('birthdayAlerts')?.checked,
+                    anniversary: document.getElementById('anniversaryAlerts')?.checked,
+                    tasks: document.getElementById('taskNotifications')?.checked,
+                    dueDates: document.getElementById('dueDateReminders')?.checked,
+                    kudos: document.getElementById('kudosNotifications')?.checked,
+                    teamKudos: document.getElementById('teamKudos')?.checked
+                }
+            };
+            
+            console.log('Saving all settings:', settings);
+            
+            if (window.api && window.api.showSuccessNotification) {
+                window.api.showSuccessNotification('All settings saved successfully!');
+            } else {
+                alert('All settings saved successfully!');
+            }
+        }
+
+        function exportData() {
+            if (confirm('Do you want to export your data? This may take a few minutes.')) {
+                console.log('Exporting user data...');
+                if (window.api && window.api.showSuccessNotification) {
+                    window.api.showSuccessNotification('Data export initiated. You will receive an email when ready.');
+                } else {
+                    alert('Data export initiated. You will receive an email when ready.');
+                }
+            }
+        }
+
+        function deactivateAccount() {
+            if (confirm('Are you sure you want to deactivate your account? This action can be reversed by contacting support.')) {
+                console.log('Deactivating account...');
+                if (window.api && window.api.showErrorNotification) {
+                    window.api.showErrorNotification('Please contact support to deactivate your account.');
+                } else {
+                    alert('Please contact support to deactivate your account.');
+                }
+            }
+        }
+
+        function logout() {
+            if (window.auth && window.auth.logout) {
+                window.auth.logout();
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
