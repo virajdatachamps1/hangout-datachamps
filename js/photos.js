@@ -65,48 +65,120 @@ class PhotoGalleryManager {
     return [
       {
         id: 1,
-        url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800',
-        caption: 'Team Building Workshop 2025',
+        url: 'assets/photos/img1.jpg',
+        caption: 'Off-site',
         category: 'events',
         uploadedBy: 'HR Team',
         date: new Date().toISOString()
       },
       {
         id: 2,
-        url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800',
-        caption: 'Q2 Success Celebration',
-        category: 'celebrations',
+        url: 'assets/photos/img2.jpg',
+        caption: 'Off-site',
+        category: 'events',
         uploadedBy: 'Social Team',
         date: new Date(Date.now() - 86400000).toISOString()
       },
       {
         id: 3,
-        url: 'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=800',
-        caption: 'Modern Office Space',
-        category: 'office',
+        url: 'assets/photos/img3.jpg',
+        caption: 'Training',
+        category: 'Training',
         uploadedBy: 'Admin',
         date: new Date(Date.now() - 172800000).toISOString()
       },
       {
         id: 4,
-        url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800',
-        caption: 'AI Training Session',
-        category: 'training',
+        url: 'assets/photos/img4.jpg',
+        caption: 'Off-site',
+        category: 'events',
         uploadedBy: 'L&D Team',
         date: new Date(Date.now() - 259200000).toISOString()
       },
       {
         id: 5,
-        url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800',
-        caption: 'Annual Company Picnic',
+        url: 'assets/photos/img5.jpg',
+        caption: 'Off-site',
         category: 'events',
         uploadedBy: 'HR Team',
         date: new Date(Date.now() - 345600000).toISOString()
       },
       {
         id: 6,
-        url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800',
-        caption: 'Innovation Hackathon',
+        url: 'assets/photos/img6.jpg',
+        caption: 'Off-site',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 7,
+        url: 'assets/photos/img7.jpg',
+        caption: 'Off-site',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 8,
+        url: 'assets/photos/img8.jpg',
+        caption: 'Innovation Event',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 9,
+        url: 'assets/photos/img9.jpg',
+        caption: 'Environmental Activity',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 10,
+        url: 'assets/photos/img10.jpg',
+        caption: 'Off-site',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 11,
+        url: 'assets/photos/img11.jpg',
+        caption: 'Meet-up',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 12,
+        url: 'assets/photos/img12.jpg',
+        caption: 'Trekking',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 13,
+        url: 'assets/photos/img13.jpg',
+        caption: 'Off-site',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 14,
+        url: 'assets/photos/img14.jpg',
+        caption: 'Meet-up',
+        category: 'events',
+        uploadedBy: 'Tech Team',
+        date: new Date(Date.now() - 432000000).toISOString()
+      },
+      {
+        id: 15,
+        url: 'assets/photos/img15.jpg',
+        caption: 'Dinner',
         category: 'events',
         uploadedBy: 'Tech Team',
         date: new Date(Date.now() - 432000000).toISOString()
