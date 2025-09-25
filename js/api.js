@@ -17,6 +17,20 @@ class APIManager {
     this.apiSecret = API_SECRET;
   }
 
+  // Add this to your APIManager class in api.js
+isAdmin() {
+  const userEmail = window.auth?.getUserEmail();
+  const adminEmails = ['your.admin.email@datachamps.ai', 'another.admin@datachamps.ai'];
+  return adminEmails.includes(userEmail);
+}
+
+async createAnnouncement(announcementData) {
+  if (!this.isAdmin()) {
+    throw new Error('Admin access required');
+  }
+  return await this.makeRequest('createAnnouncement', announcementData);
+}
+
   async makeRequest(action, data = {}, method = 'POST') {
     try {
       const userEmail = window.auth ? window.auth.getUserEmail() : null;
@@ -361,3 +375,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Uncomment the line below to test API connection on page load
   // setTimeout(() => window.api.testConnection(), 2000);
 });
+
